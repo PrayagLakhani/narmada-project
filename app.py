@@ -1913,7 +1913,7 @@ def collaborator_generate_precip_year():
       
         return jsonify({
             "message": f"Raster generated for {year}",
-            "file": f"data/collaborator/{session["collab_id"]}/display/precip/output_precip_rasters/precip_{year}_30m.tif"
+            "file": f"data/collaborator/{session['collab_id']}/display/precip/output_precip_rasters/precip_{year}_30m.tif"
         })
 
     except Exception as e:
