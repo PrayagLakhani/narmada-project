@@ -15,12 +15,15 @@ ENV C_INCLUDE_PATH=/usr/include/gdal
 # Set working directory
 WORKDIR /app
 
-# Copy requirements first (better caching)
+# Copy requirements first
 COPY requirements.txt .
 
-# Upgrade pip + install dependencies
+# Install Python dependencies (FORCE fresh install)
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# DEBUG (remove later)
+RUN pip list
 
 # Copy rest of code
 COPY . .
