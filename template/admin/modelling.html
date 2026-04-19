@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Modelling</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brand: {
+            400: '#3b5ba5',
+            700: '#1f3c88',
+            900: '#16306d',
+          }
+        }
+      }
+    }
+  }
+</script>
+</head>
+
+<body class="bg-gray-50 min-h-screen font-sans antialiased text-slate-800 m-0 flex flex-col relative overflow-hidden">
+
+  <!-- Background decorations (matched to login page) -->
+  <div class="fixed inset-0 bg-gradient-to-br from-brand-700 to-brand-400 z-0"></div>
+  <div class="absolute top-10 left-10 w-96 h-96 bg-white opacity-10 mix-blend-overlay rounded-full z-0"></div>
+  <div class="absolute bottom-10 right-20 w-96 h-96 bg-brand-900 opacity-20 mix-blend-overlay rounded-full z-0"></div>
+
+  <!-- Superior Navbar -->
+  <nav class="bg-transparent border-0 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center gap-4">
+          <div class="relative">
+            <button id="menuButton" type="button" class="text-white font-bold text-2xl tracking-tight cursor-pointer" onclick="toggleMenu(event)">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+
+            <!-- Flyout Menu Sidebar -->
+            <div class="absolute top-full left-0 mt-2 w-64 bg-white border border-slate-200 shadow-xl rounded-lg z-[1001] hidden overflow-hidden transition-all" id="menu">
+              <a href="/" class="block px-5 py-3.5 text-slate-600 hover:bg-slate-50 hover:text-brand-700 font-medium border-b border-slate-100 flex items-center gap-3">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                  Home Portal
+              </a>
+              <a href="/admin/logout" class="block px-5 py-3.5 text-red-500 hover:bg-red-50 font-medium flex items-center gap-3">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                  Log Out
+              </a>
+            </div>
+          </div>
+          <span class="text-xl font-extrabold text-white tracking-tight">Admin Dashboard</span>
+        </div>
+        <div class="flex items-center gap-4">
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
+    <div class="mb-10 text-center">
+      <h1 class="text-3xl font-extrabold text-white tracking-tight">System Modules</h1>
+      <p class="mt-2 text-md text-white/90 max-w-3xl mx-auto">Select a workspace module below to upload and manage modelling datasets.</p>
+    </div>
+
+    <!-- Minimalist Grid Links -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+
+      <a href="/admin/upload/training" class="group bg-white border border-slate-200 rounded-xl p-6 hover:border-brand-400 hover:shadow-md transition-all flex flex-col items-start gap-4">
+        <div class="p-3 bg-indigo-50 text-indigo-600 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+        </div>
+        <div>
+            <h3 class="text-lg font-bold text-slate-800 mb-1 group-hover:text-indigo-600">Upload Training Data</h3>
+            <p class="text-sm text-slate-500 leading-relaxed">Submit training datasets for model preparation and workflows.</p>
+        </div>
+      </a>
+
+      <a href="/admin/upload/testing" class="group bg-white border border-slate-200 rounded-xl p-6 hover:border-brand-400 hover:shadow-md transition-all flex flex-col items-start gap-4">
+        <div class="p-3 bg-teal-50 text-teal-600 rounded-lg group-hover:bg-teal-600 group-hover:text-white transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+        </div>
+        <div>
+            <h3 class="text-lg font-bold text-slate-800 mb-1 group-hover:text-teal-600">Upload Testing Data</h3>
+            <p class="text-sm text-slate-500 leading-relaxed">Send testing batches to validate model performance outcomes.</p>
+        </div>
+      </a>
+
+    </div>
+  </main>
+
+</body>
+
+<script>
+function toggleMenu(event) {
+  if (event) event.stopPropagation();
+  const menu = document.getElementById("menu");
+  menu.classList.toggle("hidden");
+}
+
+document.addEventListener("click", (event) => {
+  const menu = document.getElementById("menu");
+  const menuButton = document.getElementById("menuButton");
+
+  if (menu.classList.contains("hidden")) return;
+  if (menu.contains(event.target)) return;
+  if (menuButton.contains(event.target)) return;
+
+  menu.classList.add("hidden");
+});
+</script>
+</html>

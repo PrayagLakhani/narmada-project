@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Collaborator Access - Narmada Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: { colors: { brand: { 400: '#3b5ba5', 700: '#1f3c88', 900: '#16306d' } }, fontFamily: { sans: ['Inter', 'sans-serif'] } } } }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    .hidden-form { display: none; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-brand-700 to-brand-400 flex items-center justify-center min-h-screen font-sans antialiased text-gray-800 p-4 relative overflow-hidden">
+
+  <!-- Background decorations -->
+  <div class="absolute top-10 left-10 w-96 h-96 bg-white opacity-10 mix-blend-overlay rounded-full z-0"></div>
+  <div class="absolute bottom-10 right-20 w-96 h-96 bg-brand-900 opacity-20 mix-blend-overlay rounded-full z-0"></div>
+
+  <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-gray-100 p-8 z-10 relative">
+    
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 text-blue-700 mb-4 shadow-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+      </div>
+      <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Collaborator Access</h2>
+      <p class="text-gray-500 text-sm mt-2">Sign in or register to contribute</p>
+    </div>
+
+    <!-- TOGGLE -->
+    <div class="flex p-1 bg-gray-100 rounded-lg mb-8">
+      <button id="loginTab" onclick="showForm('login')" class="flex-1 py-2 text-sm font-medium rounded-md bg-white shadow text-gray-900 transition-all">Login</button>
+      <button id="registerTab" onclick="showForm('register')" class="flex-1 py-2 text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 transition-all">Register</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <form id="loginForm" method="POST" class="space-y-5">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+        <input type="email" name="email" class="block w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-brand-700 focus:border-brand-700 text-sm transition-colors" placeholder="user@example.com" required>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+        <input type="password" name="password" class="block w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-brand-700 focus:border-brand-700 text-sm transition-colors" placeholder="********" required>
+      </div>
+      <input type="hidden" name="action" value="login">
+      <button type="submit" class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-white bg-brand-700 hover:bg-brand-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-700 transition-colors mt-2">Sign In</button>
+    </form>
+
+    <!-- REGISTER FORM -->
+    <form id="registerForm" method="POST" class="space-y-5 hidden-form">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+        <input type="email" name="email" class="block w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-brand-700 focus:border-brand-700 text-sm transition-colors" placeholder="user@example.com" required>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Create Password</label>
+        <input type="password" name="password" class="block w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-brand-700 focus:border-brand-700 text-sm transition-colors" placeholder="********" required>
+      </div>
+      <input type="hidden" name="action" value="register">
+      <button type="submit" class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-white bg-brand-700 hover:bg-brand-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-700 transition-colors mt-2">Create Account</button>
+    </form>
+
+    <!-- MESSAGES -->
+    <div class="mt-4">
+      {% if error %}
+      <div class="flex items-center p-3 text-sm text-red-800 rounded-lg bg-red-50" role="alert">
+        <span class="font-medium">{{ error }}</span>
+      </div>
+      {% endif %}
+
+      {% if success %}
+      <div class="flex items-center p-3 text-sm text-green-800 rounded-lg bg-green-50" role="alert">
+        <span class="font-medium">{{ success }}</span>
+      </div>
+      {% endif %}
+    </div>
+    
+    <div class="mt-6 text-center">
+      <a href="/" class="text-sm text-brand-700 hover:text-brand-900 font-medium flex items-center justify-center gap-1 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+        Back to Portal Select
+      </a>
+    </div>
+    
+  </div>
+
+  <script>
+    function showForm(type) {
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+      const loginTab = document.getElementById('loginTab');
+      const registerTab = document.getElementById('registerTab');
+      
+      const activeClass = ['bg-white', 'shadow', 'text-gray-900'];
+      const inactiveClass = ['text-gray-500', 'hover:text-gray-700'];
+
+      if (type === 'login') {
+        loginForm.classList.remove('hidden-form');
+        registerForm.classList.add('hidden-form');
+        
+        loginTab.classList.add(...activeClass);
+        loginTab.classList.remove(...inactiveClass);
+        registerTab.classList.remove(...activeClass);
+        registerTab.classList.add(...inactiveClass);
+      } else {
+        registerForm.classList.remove('hidden-form');
+        loginForm.classList.add('hidden-form');
+        
+        registerTab.classList.add(...activeClass);
+        registerTab.classList.remove(...inactiveClass);
+        loginTab.classList.remove(...activeClass);
+        loginTab.classList.add(...inactiveClass);
+      }
+    }
+  </script>
+</body>
+</html>

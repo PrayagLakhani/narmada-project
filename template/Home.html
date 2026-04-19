@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Narmada Portal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brand: {
+            400: '#3b5ba5',
+            700: '#1f3c88',
+            900: '#16306d'
+          }
+        },
+        fontFamily: {
+          sans: ['Inter', 'sans-serif'],
+        }
+      }
+    }
+  }
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="bg-gray-50 flex h-screen font-sans antialiased text-gray-800">
+
+<div class="flex w-full h-full">
+
+  <!-- LEFT SIDE -->
+  <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-brand-700 to-brand-400 text-white items-center justify-center p-12 relative overflow-hidden shadow-2xl z-10">
+    <div class="absolute inset-0 bg-black opacity-10"></div>
+    <div class="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-white opacity-5 mix-blend-overlay"></div>
+    <div class="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-brand-900 opacity-20 mix-blend-overlay"></div>
+    
+    <div class="relative z-10 text-center max-w-lg">
+      <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-white/20 mb-8 backdrop-blur-sm shadow-xl border border-white/30">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+        </svg>
+      </div>
+      <h1 class="text-4xl md:text-5xl lg:text-5xl font-bold leading-tight mb-6 drop-shadow-md">
+        Narmada River <br>
+        <span class="text-blue-100 font-light text-3xl md:text-4xl block mt-2">Pollution Assessment System</span>
+      </h1>
+      <p class="text-lg text-blue-100 font-medium opacity-80 mt-4 leading-relaxed">
+        Advanced monitoring and analytics platform for restoring and maintaining the ecological balance of the Narmada Basin.
+      </p>
+    </div>
+  </div>
+
+  <!-- RIGHT SIDE -->
+  <div class="w-full lg:w-1/2 bg-gray-50 flex flex-col justify-center items-center p-8 relative">
+    
+    <!-- Fancy Background Elements for Mobile -->
+    <div class="absolute top-0 right-0 w-full h-1/3 bg-gradient-to-br from-brand-700 to-brand-400 rounded-b-[4rem] shadow-lg lg:hidden pointer-events-none"></div>
+
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-gray-100 p-8 z-10 relative mt-16 lg:mt-0 transform transition-all duration-300 hover:shadow-2xl">
+      <div class="text-center mb-10">
+        <h2 class="text-3xl font-bold text-gray-900 mb-3 tracking-tight">Welcome</h2>
+        <p class="text-gray-500 text-sm font-medium">Please select your portal access role to continue</p>
+      </div>
+
+      <div class="space-y-4">
+        <a href="/admin/login" class="group flex items-center justify-between p-4 rounded-xl border-2 border-gray-50 hover:border-brand-700 hover:bg-brand-50 transition-all duration-200 shadow-sm hover:shadow-md">
+          <div class="flex items-center gap-4">
+            <div class="bg-indigo-100 text-brand-700 p-3 rounded-lg group-hover:bg-brand-700 group-hover:text-white transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+            </div>
+            <div class="text-left">
+              <span class="block font-semibold text-gray-900 group-hover:text-brand-900">Administrator</span>
+              <span class="block text-xs text-gray-500">System management & controls</span>
+            </div>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300 group-hover:text-brand-700 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+        </a>
+
+        <a href="/viewer/login" class="group flex items-center justify-between p-4 rounded-xl border-2 border-gray-50 hover:border-brand-700 hover:bg-brand-50 transition-all duration-200 shadow-sm hover:shadow-md">
+          <div class="flex items-center gap-4">
+            <div class="bg-cyan-100 text-brand-700 p-3 rounded-lg group-hover:bg-brand-700 group-hover:text-white transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+            </div>
+            <div class="text-left">
+              <span class="block font-semibold text-gray-900 group-hover:text-brand-900">Viewer</span>
+              <span class="block text-xs text-gray-500">Public access & analytics</span>
+            </div>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300 group-hover:text-brand-700 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+        </a>
+
+        <a href="/collaborator/login" class="group flex items-center justify-between p-4 rounded-xl border-2 border-gray-50 hover:border-brand-700 hover:bg-brand-50 transition-all duration-200 shadow-sm hover:shadow-md">
+          <div class="flex items-center gap-4">
+            <div class="bg-blue-100 text-brand-700 p-3 rounded-lg group-hover:bg-brand-700 group-hover:text-white transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            </div>
+            <div class="text-left">
+              <span class="block font-semibold text-gray-900 group-hover:text-brand-900">Collaborator</span>
+              <span class="block text-xs text-gray-500">Data entry & field operations</span>
+            </div>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300 group-hover:text-brand-700 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

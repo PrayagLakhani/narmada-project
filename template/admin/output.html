@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WQI Output</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/geotiff"></script>
+    <script src="https://unpkg.com/georaster"></script>
+    <script src="https://unpkg.com/georaster-layer-for-leaflet"></script>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+        }
+
+        #map {
+            position: absolute;
+            top: 58px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .topbar {
+            height: 58px;
+            background: #0f4c5c;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0 16px;
+            box-sizing: border-box;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.22);
+        }
+
+        .title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .control-panel {
+            position: absolute;
+            z-index: 1200;
+            left: 15px;
+            bottom: 15px;
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid #dfe8ed;
+            border-radius: 12px;
+            box-shadow: 0 10px 26px rgba(0, 0, 0, 0.22);
+            padding: 12px;
+            width: min(360px, calc(100vw - 28px));
+            box-sizing: border-box;
+            backdrop-filter: blur(2px);
+        }
+
+        .control-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #145265;
+            margin-bottom: 10px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .controls-row {
+            display: grid;
+            grid-template-columns: 48px 1fr;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .controls-row label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #0f4c5c;
+        }
+
+        .toggle-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .action-row {
+            display: flex;
+            justify-content: center;
+        }
+
+        .controls select,
+        .controls button,
+        .controls a {
+            border: 1px solid #cad7df;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 13px;
+            text-decoration: none;
+            box-sizing: border-box;
+        }
+
+        .controls select {
+            background: #ffffff;
+            color: #222;
+        }
+
+        .controls button {
+            cursor: pointer;
+            background: #0f4c5c;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .controls button:hover {
+            background: #0b3f4c;
+        }
+
+        .action-row #loadRasterBtn {
+            width: min(220px, 100%);
+        }
+
+        .controls a {
+            background: #f0f6f8;
+            border-color: #bfd2da;
+            text-align: center;
+            font-weight: 600;
+            color: #0f4c5c;
+        }
+
+        .controls a:hover {
+            background: #e3eef2;
+            color: #fff;
+        }
+
+        .toggle-wrap {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #ffffff;
+            color: #1f2c34;
+            border: 1px solid #cad7df;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status {
+            position: absolute;
+            z-index: 1200;
+            right: 15px;
+            bottom: 15px;
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid #dfe8ed;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 13px;
+            line-height: 1.45;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+            max-width: min(340px, calc(100vw - 28px));
+            box-sizing: border-box;
+        }
+
+        .status:empty {
+            display: none;
+        }
+
+        .leaflet-bottom.leaflet-right .leaflet-control {
+            margin-right: 15px;
+            margin-bottom: 15px;
+        }
+
+        .leaflet-control.wqi-legend {
+            background: rgba(255, 255, 255, 0.97);
+            border: 1px solid #dfe8ed;
+            padding: 10px 12px;
+            border-radius: 10px;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.2);
+            line-height: 1.5;
+        }
+
+        .swatch {
+            width: 14px;
+            height: 14px;
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @media (max-width: 700px) {
+            .control-panel {
+                bottom: 10px;
+                left: 10px;
+                right: 10px;
+                width: auto;
+            }
+
+            .status {
+                bottom: 196px;
+                left: 10px;
+                right: 10px;
+                max-width: none;
+            }
+
+            .toggle-row,
+            .action-row {
+                grid-template-columns: 1fr;
+            }
+
+            .leaflet-bottom.leaflet-right .leaflet-control {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <div class="title">Admin WQI Output</div>
+    </div>
+
+    <div class="control-panel">
+        <div class="control-title">Map Controls</div>
+        <div class="controls">
+            <div class="controls-row">
+            <label for="yearSelect">Year</label>
+            <select id="yearSelect"></select>
+            </div>
+
+            <div class="controls-row">
+            <label for="monthSelect">Month</label>
+            <select id="monthSelect"></select>
+            </div>
+
+            <div class="toggle-row">
+            <label class="toggle-wrap" for="toggleStateBoundary">
+                <input id="toggleStateBoundary" type="checkbox" checked>
+                State Boundary
+            </label>
+            <label class="toggle-wrap" for="toggleDistrictBoundary">
+                <input id="toggleDistrictBoundary" type="checkbox" checked>
+                District Boundary
+            </label>
+            </div>
+
+            <div class="action-row">
+            <button id="loadRasterBtn">Load Raster</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="map"></div>
+    <div id="status" class="status"></div>
+
+    <script>
+        const monthOrder = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        const map = L.map("map", { zoomControl: true, attributionControl: false }).setView([22.8, 78.6], 6);
+        map.createPane("wqiPane");
+        map.getPane("wqiPane").style.zIndex = 320;
+
+        let stateBoundaryLayer = null;
+        let districtBoundaryLayer = null;
+        let rasterLayer = null;
+        let monthsByYear = {};
+        let activeRenderToken = 0;
+
+        function setStatus(message) {
+            document.getElementById("status").textContent = message;
+        }
+
+        function getDistrictName(properties = {}) {
+            return (
+                properties.District ||
+                properties.district ||
+                properties.DISTRICT ||
+                properties.NAME ||
+                properties.Name ||
+                "Unknown District"
+            );
+        }
+
+        const legend = L.control({ position: "bottomright" });
+        legend.onAdd = function () {
+    const div = L.DomUtil.create("div", "wqi-legend");
+    div.innerHTML = "<b>WQI Ratio</b><br>"
+        + "<div><span class='swatch' style='background:#1a9850'></span>Low (&lt; 0.5)</div>"
+        + "<div><span class='swatch' style='background:#fdae61'></span>Medium (0.5 - 0.75)</div>"
+        + "<div><span class='swatch' style='background:#d73027'></span>High (&gt; 0.75)</div>";
+    return div;
+};
+legend.addTo(map);
+
+        function getWqiColorByRatio(ratio) {
+    if (ratio === null || ratio === undefined || Number.isNaN(ratio)) return null;
+
+    if (ratio < 0.5) return "#1a9850";     // Low (reddish)
+    if (ratio <= 0.75) return "#fdae61";   // Medium (orange)
+    return "#d73027";                     // High (green)
+}
+
+        async function loadStateBoundary() {
+            const res = await fetch("/data/admin/display/geojson/state_boundary.geojson");
+            if (!res.ok) throw new Error("Failed to load state boundary");
+            const geojson = await res.json();
+
+            stateBoundaryLayer = L.geoJSON(geojson, {
+                style: { color: "#111", weight: 2, fillOpacity: 0.05 }
+            }).addTo(map);
+
+            map.fitBounds(stateBoundaryLayer.getBounds());
+        }
+
+        async function loadDistrictBoundary() {
+            const res = await fetch("/data/admin/display/geojson/district_boundary.geojson");
+            if (!res.ok) throw new Error("Failed to load district boundary");
+            const geojson = await res.json();
+
+            districtBoundaryLayer = L.geoJSON(geojson, {
+                style: { color: "#444", weight: 1, fillOpacity: 0.02 },
+                onEachFeature: function (feature, layer) {
+                    const districtName = getDistrictName(feature.properties || {});
+                    layer.on("click", (e) => {
+                        L.popup({ closeButton: true, autoPan: true })
+                            .setLatLng(e.latlng)
+                            .setContent(`District: ${districtName}`)
+                            .openOn(map);
+                    });
+                }
+            }).addTo(map);
+        }
+
+        function updateStateBoundaryVisibility() {
+            const stateChecked = document.getElementById("toggleStateBoundary").checked;
+            const districtChecked = document.getElementById("toggleDistrictBoundary").checked;
+
+            if (stateBoundaryLayer && stateChecked && !map.hasLayer(stateBoundaryLayer)) {
+                stateBoundaryLayer.addTo(map);
+                stateBoundaryLayer.bringToFront();
+            }
+
+            if (stateBoundaryLayer && !stateChecked && map.hasLayer(stateBoundaryLayer)) {
+                map.removeLayer(stateBoundaryLayer);
+            }
+
+            if (districtBoundaryLayer && districtChecked && !map.hasLayer(districtBoundaryLayer)) {
+                districtBoundaryLayer.addTo(map);
+                districtBoundaryLayer.bringToFront();
+            }
+
+            if (districtBoundaryLayer && !districtChecked && map.hasLayer(districtBoundaryLayer)) {
+                map.removeLayer(districtBoundaryLayer);
+            }
+        }
+
+        function clearExistingRasterLayers() {
+            if (rasterLayer && map.hasLayer(rasterLayer)) {
+                map.removeLayer(rasterLayer);
+            }
+            rasterLayer = null;
+
+            map.eachLayer((layer) => {
+                if (layer && layer.options && layer.options.georaster) {
+                    map.removeLayer(layer);
+                }
+            });
+
+            const pane = map.getPane("wqiPane");
+            if (pane) {
+                pane.innerHTML = "";
+            }
+        }
+
+        async function loadRasterMeta() {
+            const res = await fetch("/api/admin-gnn-wqi-rasters");
+            if (!res.ok) throw new Error("Failed to load raster list");
+            const data = await res.json();
+
+            monthsByYear = data.monthsByYear || {};
+
+            const yearSelect = document.getElementById("yearSelect");
+            const monthSelect = document.getElementById("monthSelect");
+            yearSelect.innerHTML = "";
+            monthSelect.innerHTML = "";
+
+            if (!data.years || data.years.length === 0) {
+                yearSelect.innerHTML = "<option>No year</option>";
+                monthSelect.innerHTML = "<option>No month</option>";
+                setStatus("No generated rasters found in data/admin/gnn/wqi_rasters");
+                return;
+            }
+
+            data.years.forEach((year) => {
+                const opt = document.createElement("option");
+                opt.value = String(year);
+                opt.textContent = String(year);
+                yearSelect.appendChild(opt);
+            });
+
+            function populateMonths(selectedYear) {
+                monthSelect.innerHTML = "";
+                const months = monthsByYear[String(selectedYear)] || [];
+                months.sort((a, b) => monthOrder.indexOf(a) - monthOrder.indexOf(b));
+
+                months.forEach((m) => {
+                    const opt = document.createElement("option");
+                    opt.value = m;
+                    opt.textContent = m;
+                    monthSelect.appendChild(opt);
+                });
+            }
+
+            populateMonths(data.years[data.years.length - 1]);
+            yearSelect.value = String(data.years[data.years.length - 1]);
+
+            yearSelect.addEventListener("change", () => {
+                populateMonths(yearSelect.value);
+                clearExistingRasterLayers();
+                setStatus("Select month and click Load Raster");
+            });
+
+            monthSelect.addEventListener("change", () => {
+                clearExistingRasterLayers();
+                setStatus("Click Load Raster to view selected month");
+            });
+
+            setStatus("");
+        }
+
+        async function renderSelectedRaster() {
+            const renderToken = ++activeRenderToken;
+            const year = document.getElementById("yearSelect").value;
+            const month = document.getElementById("monthSelect").value;
+
+            const availableMonths = monthsByYear[String(year)] || [];
+            if (!availableMonths.includes(month)) {
+                alert("Raster not found for selected year/month.");
+                return;
+            }
+
+            const selectedFile = `wqi_${year}_${month}.tif`;
+            const selectedUrl = `/data/admin/gnn/wqi_rasters/${selectedFile}`;
+           
+
+            const response = await fetch(selectedUrl + "?ts=" + Date.now());
+            if (!response.ok) throw new Error("Raster file could not be loaded");
+            const arrayBuffer = await response.arrayBuffer();
+            const georaster = await parseGeoraster(arrayBuffer);
+
+            if (renderToken !== activeRenderToken) {
+                return;
+            }
+
+            const noDataValue = georaster.noDataValue;
+            const min = georaster.mins && Number.isFinite(georaster.mins[0]) ? georaster.mins[0] : 0;
+            const max = georaster.maxs && Number.isFinite(georaster.maxs[0]) ? georaster.maxs[0] : 1;
+            const span = max - min;
+
+            clearExistingRasterLayers();
+
+            rasterLayer = new GeoRasterLayer({
+                georaster: georaster,
+                opacity: 0.75,
+                resolution: 256,
+                pane: "wqiPane",
+                pixelValuesToColorFn: function (pixelValues) {
+                    const val = pixelValues[0];
+
+                    if (val === undefined || val === null || Number.isNaN(val)) return null;
+                    if (noDataValue !== undefined && val === noDataValue) return null;
+                    if (!Number.isFinite(val)) return null;
+                    if (!Number.isFinite(span) || span <= 0) {
+                        return getWqiColorByRatio(0.5);
+                    }
+
+                    const ratio = (val - min) / span;
+                    return getWqiColorByRatio(Math.max(0, Math.min(1, ratio)));
+                }
+            });
+
+            rasterLayer.addTo(map);
+            if (stateBoundaryLayer) {
+                updateStateBoundaryVisibility();
+            }
+            map.fitBounds(rasterLayer.getBounds());
+            
+        }
+
+        document.getElementById("loadRasterBtn").addEventListener("click", async () => {
+            try {
+                await renderSelectedRaster();
+            } catch (err) {
+                alert(err.message || "Failed to render raster");
+            }
+        });
+
+        (async function init() {
+            try {
+                await loadStateBoundary();
+                await loadDistrictBoundary();
+                document.getElementById("toggleStateBoundary").addEventListener("change", updateStateBoundaryVisibility);
+                document.getElementById("toggleDistrictBoundary").addEventListener("change", updateStateBoundaryVisibility);
+                await loadRasterMeta();
+            } catch (err) {
+                setStatus("Error: " + (err.message || "Page initialization failed"));
+                alert(err.message || "Page initialization failed");
+            }
+        })();
+    </script>
+</body>
+</html>

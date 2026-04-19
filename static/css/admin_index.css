@@ -1,0 +1,200 @@
+html, body {
+      margin: 0;
+      height: 100%;
+      font-family: 'Inter', Arial, sans-serif;
+    }
+
+    /* ---------- TOPBAR ---------- */
+    .topbar {
+      height: 50px;
+      background: linear-gradient(to right, #1f3c88, #3b5ba5);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      font-size: 20px;
+      font-weight: 600;
+      gap: 15px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+      z-index: 2000;
+    }
+
+    .topbar-links {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .topbar-links a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .topbar-links .upload-display-btn {
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+      transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .topbar-links .upload-display-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-1px);
+      box-shadow: 0 5px 14px rgba(0, 0, 0, 0.22);
+    }
+
+    .topbar-links a:hover {
+      color: #e5e7eb;
+    }
+
+    /* ---------- MENU ---------- */
+    .menu {
+      position: absolute;
+      top: 50px;
+      left: 0;
+      width: 260px;
+      background: #fff;
+      display: none;
+      box-shadow: 2px 2px 15px rgba(0,0,0,0.2);
+      border-radius: 8px;
+      z-index: 3000;
+      overflow: hidden;
+    }
+
+    .menu a {
+      display: block;
+      padding: 12px 18px;
+      text-decoration: none;
+      color: #333;
+      border-bottom: 1px solid #eee;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .menu a:hover {
+      background: #1f3c88;
+      color: #fff;
+    }
+
+    /* ---------- MAP ---------- */
+    #map {
+      width: 100%;
+      height: calc(100% - 50px);
+      background: #e9eff5;
+    }
+
+    /* ---------- LEGEND ---------- */
+    .legend {
+      background: #fff;
+      padding: 12px 14px;
+      line-height: 20px;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.3);
+      border-radius: 8px;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .legend span {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      margin-right: 6px;
+      border-radius: 3px;
+      vertical-align: middle;
+    }
+
+    /* Zoom buttons fix (Leaflet) */
+    .leaflet-control-zoom {
+      transition: top 0.2s;
+    }
+
+    /* ---------- INPUT PARAMETERS BOX ---------- */
+    .input-box {
+      background: #ffffff;
+      padding: 12px 14px;
+      width: 220px;
+      max-height: 60vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.3);
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .input-box::-webkit-scrollbar {
+      width: 7px;
+    }
+
+    .input-box::-webkit-scrollbar-thumb {
+      background: #9aa9cc;
+      border-radius: 999px;
+    }
+
+    .input-box::-webkit-scrollbar-track {
+      background: #eef2fb;
+      border-radius: 999px;
+    }
+
+    .input-box h4 {
+      margin: 0 0 8px 0;
+      font-size: 15px;
+      color: #1f3c88;
+    }
+
+    .input-box button {
+      width: 100%;
+      margin-top: 8px;
+      padding: 6px;
+      background: #1f3c88;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .input-box button:hover {
+      background: #16306d;
+    }
+
+    .accordion {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.acc-item {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.acc-header {
+  background: #f4f6fb;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #1f3c88;
+  transition: background 0.2s;
+}
+
+.acc-header:hover {
+  background: #e7ebf7;
+}
+
+.acc-body {
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 10px;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.acc-item.active .acc-body {
+  max-height: 400px;
+  padding: 10px;
+}

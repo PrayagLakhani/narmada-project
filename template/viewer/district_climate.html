@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>District Climate | Narmada Basin</title>
+
+<!-- Inter Font -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/district_climate.css">
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+  <h1>River Basin Climate Analysis</h1>
+  <p>Select district to compute all available parameter means across all years and months</p>
+</header>
+
+<div class="card">
+
+  <div class="actions">
+    <select id="districtDropdown">
+      <option>Loading...</option>
+    </select>
+
+    <button onclick="calculate()">Calculate All Means</button>
+
+    <span class="status" id="status">Select a district to calculate all parameters</span>
+  </div>
+
+  <div id="result"></div>
+
+</div>
+
+<footer>
+  © Narmada River Pollution Monitoring Project
+</footer>
+
+</div>
+
+<script src = "/static/js/district_climate.js">  </script>
+
+</body>
+</html>

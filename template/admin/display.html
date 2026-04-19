@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html> 
+<head>
+  <meta charset="utf-8" />
+  <title>Narmada GIS Layers</title>
+ 
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<link rel="stylesheet" href="/static/css/admin_index.css">
+</head>
+
+<body>
+
+  <!-- TOPBAR -->
+<div class="topbar" onclick="toggleMenu()">
+  <span class="menu-icon">☰</span>
+  <span class="title"> Admin Analysis</span>
+  <div class="topbar-links" onclick="event.stopPropagation()">
+    <a href="/admin/upload/display" class="upload-display-btn">Upload Display Data</a>
+  </div>
+</div>
+ 
+
+  <!-- MENU -->
+  <div class="menu" id="menu">
+    <a href="/template/viewer/rivers.html">River Tributaries per District</a>
+    <a href="/template/viewer/district_climate.html">Mean Precipitaion & Temperature per District</a>
+    <a href="/admin/modelling">Modelling</a>
+    <a href="/admin/logout">LogOut</a>
+  </div>
+
+  <!-- MAP -->
+  <div id="map"></div>
+
+  <!-- Include required libraries -->
+<script src="https://unpkg.com/geotiff"></script>
+<script src="https://unpkg.com/georaster"></script>
+<script src="https://unpkg.com/georaster-layer-for-leaflet"></script>
+
+<script src="/static/js/admin_index.js"></script>
+
+

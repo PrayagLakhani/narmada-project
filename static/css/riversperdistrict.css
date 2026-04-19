@@ -1,0 +1,46 @@
+body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 80%;
+      margin: auto;
+      background: white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #2c3e50;
+      color: white;
+      text-transform: uppercase;
+      font-size: 14px;
+    }
+
+    tr:hover {
+      background: #f1f1f1;
+    }
+
+    .count {
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .river-list {
+      line-height: 1.5;
+      color: #34495e;
+    }

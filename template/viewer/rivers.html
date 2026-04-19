@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Rivers per District | Narmada Basin</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/static/css/rivers.css">
+</head>
+
+<body>
+  <div class="container">
+
+    <header>
+      <h1>River Tributaries per District</h1>
+      <p>Narmada River Basin — District-wise River Network Summary</p>
+    </header>
+
+    <div class="card">
+
+      <div class="actions">
+        <span id="status">Loading river statistics...</span>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>District</th>
+            <th>No. of Rivers</th>
+            <th>River Names</th>
+          </tr>
+        </thead>
+        <tbody id="riverTableBody">
+          
+        </tbody>
+      </table>
+
+    </div>
+
+    <footer>
+      © Narmada River Pollution Monitoring Project
+    </footer>
+
+  </div>
+
+  <script src="/static/js/rivers.js"></script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+* {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Inter", sans-serif;
+    }
+
+    body {
+      background: #f4f7fb;
+      color: #333;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      color: #1f3c88;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: #555;
+      font-size: 1rem;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .actions button {
+      background: #1f3c88;
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s ease;
+    }
+
+    .actions button:hover {
+      background: #162b63;
+    }
+
+    .actions span {
+      color: #666;
+      font-size: 0.95rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 10px;
+    }
+
+    thead {
+      background: #1f3c88;
+      color: white;
+    }
+
+    thead th {
+      padding: 14px;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+
+    tbody tr {
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      transition: background 0.2s ease;
+    }
+
+    tbody tr:hover {
+      background: #f1f5ff;
+    }
+
+    tbody td {
+      padding: 12px 14px;
+      font-size: 0.92rem;
+      vertical-align: top;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      background: #e6ecff;
+      color: #1f3c88;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    .river-list {
+      color: #444;
+      line-height: 1.5;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 25px;
+      font-size: 0.85rem;
+      color: #777;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 20px;
+      }
+
+      header h1 {
+        font-size: 1.7rem;
+      }
+
+      table {
+        font-size: 0.85rem;
+      }
+    }
