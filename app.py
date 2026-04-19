@@ -1960,7 +1960,7 @@ def collaborator_generate_temp_year():
       
         return jsonify({
             "message": f"Raster generated for {year}",
-            "file": f"data/collaborator/{session["collab_id"]}/display/temp/output_temp_rasters/precip_{year}_30m.tif"
+            "file": f"data/collaborator/{session['collab_id']}/display/temp/output_temp_rasters/precip_{year}_30m.tif"
         })
 
     except Exception as e:
@@ -2006,7 +2006,7 @@ def collaborator_generate_streamflow_year():
       
         return jsonify({
             "message": f"Raster generated for {year , month}",
-            "file": f"data/collaborator/{session["collab_id"]}/display/streamflow/output_streamflow_rasters/streamflow_{year}_{month}_30m.tif"
+            "file": f"data/collaborator/{session['collab_id']}/display/streamflow/output_streamflow_rasters/streamflow_{year}_{month}_30m.tif"
         })
 
     except Exception as e:
@@ -2052,7 +2052,7 @@ def collaborator_generate_waterlevel_year():
       
         return jsonify({
             "message": f"Raster generated for {year}",
-            "file": f"data/collaborator/{session["collab_id"]}/display/waterlevel/output_waterlevel_rasters/waterlevel_{year}_{month}_30m.tif"
+            "file": f"data/collaborator/{session['collab_id']}/display/waterlevel/output_waterlevel_rasters/waterlevel_{year}_{month}_30m.tif"
         })
 
     except Exception as e:
