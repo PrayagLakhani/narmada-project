@@ -4,3 +4,7 @@ gunicorn
 numpy
 pandas
 bcrypt
+geopandas
+shapely
+fiona
+pyproj
