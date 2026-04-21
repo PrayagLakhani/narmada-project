@@ -20,7 +20,9 @@ year_input = int(sys.argv[1])
 # PATHS
 # ======================================================
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BASE_URL = os.getenv("DATA_BASE_URL", "https://star-boys-revenues-conversation.trycloudflare.com/data").rstrip("/")
+BASE_URL = os.getenv("DATA_BASE_URL", "").rstrip("/")
+if not BASE_URL:
+    raise RuntimeError("DATA_BASE_URL environment variable is required.")
 
 station_folder = os.path.join(BASE_DIR, "data","admin","display", "temp")
 narmada_geojson = f"{BASE_URL}/admin/display/geojson/narmada.geojson"

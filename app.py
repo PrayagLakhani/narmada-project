@@ -37,7 +37,11 @@ from scripts.admin_raster_clip import (
 )
 
 app = Flask(__name__, template_folder="template")
-BASE_URL = os.getenv("DATA_BASE_URL", "https://star-boys-revenues-conversation.trycloudflare.com/data").rstrip("/")
+BASE_URL = os.getenv("DATA_BASE_URL", "").rstrip("/")
+if not BASE_URL:
+    raise RuntimeError("DATA_BASE_URL environment variable is required.")
+# Keep subprocess scripts in sync with the API's configured data server.
+os.environ["DATA_BASE_URL"] = BASE_URL
 CORS(app)
 district_cache = None
 mean_cache = {}

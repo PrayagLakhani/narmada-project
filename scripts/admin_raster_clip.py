@@ -5,11 +5,15 @@ import hashlib
 import requests
 
 
-BASE_URL = os.getenv("DATA_BASE_URL", "https://star-boys-revenues-conversation.trycloudflare.com/data").rstrip("/")
+def _base_url():
+    value = os.getenv("DATA_BASE_URL", "").rstrip("/")
+    if not value:
+        raise RuntimeError("DATA_BASE_URL environment variable is required.")
+    return value
 
 
 def _data_url(relative_path):
-    return f"{BASE_URL}/{relative_path.lstrip('/')}"
+    return f"{_base_url()}/{relative_path.lstrip('/')}"
 
 
 def _download_to_temp(relative_path, suffix):

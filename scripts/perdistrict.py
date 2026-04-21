@@ -14,7 +14,9 @@ from shapely.geometry import Point
 
 
 MONTH_ORDER = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-BASE_URL = os.getenv("DATA_BASE_URL", "https://star-boys-revenues-conversation.trycloudflare.com/data").rstrip("/")
+BASE_URL = os.getenv("DATA_BASE_URL", "").rstrip("/")
+if not BASE_URL:
+    raise RuntimeError("DATA_BASE_URL environment variable is required.")
 
 
 def _data_url(relative_path):

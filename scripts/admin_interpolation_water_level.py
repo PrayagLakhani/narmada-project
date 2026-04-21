@@ -23,7 +23,9 @@ except:
 # PATHS
 # =====================================================
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BASE_URL = os.getenv("DATA_BASE_URL", "https://star-boys-revenues-conversation.trycloudflare.com/data").rstrip("/")
+BASE_URL = os.getenv("DATA_BASE_URL", "").rstrip("/")
+if not BASE_URL:
+    raise RuntimeError("DATA_BASE_URL environment variable is required.")
 
 csv_relative_dir = "admin/display/waterlevel"
 buffer_relative_dir = "admin/display/shp"
