@@ -14,7 +14,6 @@ import smtplib
 from email.mime.text import MIMEText
 from flask import session
 from werkzeug.utils import secure_filename
-import time
 import shutil
 from flask import Flask, jsonify, send_from_directory, request
 import geopandas as gpd
@@ -38,6 +37,7 @@ from scripts.admin_raster_clip import (
 )
 
 app = Flask(__name__, template_folder="template")
+BASE_URL = "https://star-boys-revenues-conversation.trycloudflare.com/data"
 CORS(app)
 district_cache = None
 mean_cache = {}
@@ -170,7 +170,11 @@ def run_admin_gnn_pipeline():
 
     candidate_pythons = [
         os.path.join(scripts_dir, "venv", "bin", "python"),
+        os.path.join(scripts_dir, "venv", "Scripts", "python.exe"),
         os.path.join(BASE_DIR, "data", "admin", "gnn", "venv", "bin", "python"),
+        os.path.join(BASE_DIR, "data", "admin", "gnn", "venv", "Scripts", "python.exe"),
+        os.path.join(BASE_DIR, ".venv", "Scripts", "python.exe"),
+        os.path.join(BASE_DIR, ".venv", "bin", "python"),
         sys.executable,
     ]
 
@@ -178,19 +182,23 @@ def run_admin_gnn_pipeline():
     for candidate in candidate_pythons:
         if not os.path.exists(candidate):
             continue
-        probe = subprocess.run(
-            [candidate, "-c", "import torch"],
-            capture_output=True,
-            text=True,
-        )
+        try:
+            probe = subprocess.run(
+                [candidate, "-c", "import torch"],
+                capture_output=True,
+                text=True,
+            )
+        except OSError:
+            # Skip incompatible executables (e.g., Windows python.exe from Linux/WSL).
+            continue
         if probe.returncode == 0:
             python_cmd = candidate
             break
 
     if python_cmd is None:
         return jsonify({
-            "error": "No Python environment with torch found for collaborator pipeline",
-            "details": "Install torch in data/collaborator/gnn/venv or data/admin/gnn/venv."
+            "error": "No Python environment with torch found for admin pipeline",
+            "details": "Install torch in data/admin/gnn/venv or use a compatible environment with torch."
         }), 500
 
     try:
@@ -259,7 +267,7 @@ def admin_gnn_wqi_rasters():
             "month": month,
             "monthIndex": month_order.index(month),
             "file": fname,
-            "url": f"/data/admin/gnn/wqi_rasters/{fname}"
+            "url": f"{BASE_URL}/admin/gnn/wqi_rasters/{fname}"
         })
 
     parsed.sort(key=lambda x: (x["year"], x["monthIndex"]))
@@ -304,7 +312,7 @@ def viewer_gnn_wqi_rasters():
             "month": month,
             "monthIndex": month_order.index(month),
             "file": fname,
-            "url": f"/data/admin/gnn/wqi_rasters/{fname}"
+            "url": f"{BASE_URL}/admin/gnn/wqi_rasters/{fname}"
         })
 
     parsed.sort(key=lambda x: (x["year"], x["monthIndex"]))
@@ -352,7 +360,7 @@ def collaborator_gnn_wqi_rasters():
             "month": month,
             "monthIndex": month_order.index(month),
             "file": fname,
-            "url": f"/data/collaborator/{collab_id}/gnn/wqi_rasters/{fname}"
+            "url": f"{BASE_URL}/collaborator/{collab_id}/gnn/wqi_rasters/{fname}"
         })
 
     parsed.sort(key=lambda x: (x["year"], x["monthIndex"]))
@@ -742,7 +750,7 @@ def admin_generate_precip_year():
       
         return jsonify({
             "message": f"Raster generated for {year}",
-            "file": f"data/admin/display/precip/output_precip_rasters/precip_{year}_30m.tif"
+            "file": f"{BASE_URL}/admin/display/precip/output_precip_rasters/precip_{year}_30m.tif"
         })
 
     except Exception as e:
@@ -788,7 +796,7 @@ def admin_generate_temp_year():
       
         return jsonify({
             "message": f"Raster generated for {year}",
-            "file": f"data/admin/display/temp/output_temp_rasters/temp_{year}_30m.tif"
+            "file": f"{BASE_URL}/admin/display/temp/output_temp_rasters/temp_{year}_30m.tif"
         })
 
     except Exception as e:
@@ -833,7 +841,7 @@ def admin_generate_streamflow_year():
       
         return jsonify({
             "message": f"Raster generated for {year , month}",
-            "file": f"data/admin/display/streamflow/output_streamflow_rasters/streamflow_{year}_{month}_30m.tif"
+            "file": f"{BASE_URL}/admin/display/streamflow/output_streamflow_rasters/streamflow_{year}_{month}_30m.tif"
         })
 
     except Exception as e:
@@ -878,7 +886,7 @@ def admin_generate_waterlevel_year():
       
         return jsonify({
             "message": f"Raster generated for {year}",
-            "file": f"data/admin/display/waterlevel/output_waterlevel_rasters/waterlevel_{year}_{month}_30m.tif"
+            "file": f"{BASE_URL}/admin/display/waterlevel/output_waterlevel_rasters/waterlevel_{year}_{month}_30m.tif"
         })
 
     except Exception as e:
@@ -1333,7 +1341,11 @@ def run_collaborator_gnn_pipeline():
 
     candidate_pythons = [
         os.path.join(scripts_dir, "venv", "bin", "python"),
+        os.path.join(scripts_dir, "venv", "Scripts", "python.exe"),
         os.path.join(BASE_DIR, "data", "admin", "gnn", "venv", "bin", "python"),
+        os.path.join(BASE_DIR, "data", "admin", "gnn", "venv", "Scripts", "python.exe"),
+        os.path.join(BASE_DIR, ".venv", "Scripts", "python.exe"),
+        os.path.join(BASE_DIR, ".venv", "bin", "python"),
         sys.executable,
     ]
 
@@ -1341,11 +1353,15 @@ def run_collaborator_gnn_pipeline():
     for candidate in candidate_pythons:
         if not os.path.exists(candidate):
             continue
-        probe = subprocess.run(
-            [candidate, "-c", "import torch"],
-            capture_output=True,
-            text=True,
-        )
+        try:
+            probe = subprocess.run(
+                [candidate, "-c", "import torch"],
+                capture_output=True,
+                text=True,
+            )
+        except OSError:
+            # Skip incompatible executables (e.g., Windows python.exe from Linux/WSL).
+            continue
         if probe.returncode == 0:
             python_cmd = candidate
             break
@@ -1913,7 +1929,7 @@ def collaborator_generate_precip_year():
       
         return jsonify({
             "message": f"Raster generated for {year}",
-            "file": f"data/collaborator/{session['collab_id']}/display/precip/output_precip_rasters/precip_{year}_30m.tif"
+            "file": f"{BASE_URL}/collaborator/{session['collab_id']}/display/precip/output_precip_rasters/precip_{year}_30m.tif"
         })
 
     except Exception as e:
@@ -1960,7 +1976,7 @@ def collaborator_generate_temp_year():
       
         return jsonify({
             "message": f"Raster generated for {year}",
-            "file": f"data/collaborator/{session['collab_id']}/display/temp/output_temp_rasters/precip_{year}_30m.tif"
+            "file": f"{BASE_URL}/collaborator/{session['collab_id']}/display/temp/output_temp_rasters/precip_{year}_30m.tif"
         })
 
     except Exception as e:
@@ -2006,7 +2022,7 @@ def collaborator_generate_streamflow_year():
       
         return jsonify({
             "message": f"Raster generated for {year , month}",
-            "file": f"data/collaborator/{session['collab_id']}/display/streamflow/output_streamflow_rasters/streamflow_{year}_{month}_30m.tif"
+            "file": f"{BASE_URL}/collaborator/{session['collab_id']}/display/streamflow/output_streamflow_rasters/streamflow_{year}_{month}_30m.tif"
         })
 
     except Exception as e:
@@ -2052,7 +2068,7 @@ def collaborator_generate_waterlevel_year():
       
         return jsonify({
             "message": f"Raster generated for {year}",
-            "file": f"data/collaborator/{session['collab_id']}/display/waterlevel/output_waterlevel_rasters/waterlevel_{year}_{month}_30m.tif"
+            "file": f"{BASE_URL}/collaborator/{session['collab_id']}/display/waterlevel/output_waterlevel_rasters/waterlevel_{year}_{month}_30m.tif"
         })
 
     except Exception as e:
@@ -2211,4 +2227,4 @@ def static_files(filename):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(debug=True)

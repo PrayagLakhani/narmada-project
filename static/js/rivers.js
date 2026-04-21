@@ -5,7 +5,7 @@ function loadRiverData() {
   status.textContent = "Loading data...";
   tbody.innerHTML = "";
 
-  fetch("http://127.0.0.1:5000/api/admin-rivers-per-district")
+  fetch("https://star-boys-revenues-conversation.trycloudflare.com/api/admin-rivers-per-district")
     .then(res => res.json())
     .then(data => {
       data.forEach(d => {

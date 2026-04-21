@@ -293,9 +293,9 @@
 		legend.onAdd = function () {
     const div = L.DomUtil.create("div", "wqi-legend");
     div.innerHTML = "<b>WQI Ratio</b><br>"
-        + "<div><span class='swatch' style='background:#d73027'></span>Low (&lt; 0.5)</div>"
+        + "<div><span class='swatch' style='background:#1a9850'></span>Low (&lt; 0.5)</div>"
         + "<div><span class='swatch' style='background:#fdae61'></span>Medium (0.5 - 0.75)</div>"
-        + "<div><span class='swatch' style='background:#1a9850'></span>High (&gt; 0.75)</div>";
+        + "<div><span class='swatch' style='background:#d73027'></span>High (&gt; 0.75)</div>";
     return div;
 };
 legend.addTo(map);
@@ -303,13 +303,13 @@ legend.addTo(map);
         function getWqiColorByRatio(ratio) {
     if (ratio === null || ratio === undefined || Number.isNaN(ratio)) return null;
 
-    if (ratio < 0.5) return "#d73027";     // Low (reddish)
+    if (ratio < 0.5) return "#1a9850";     // Low (reddish)
     if (ratio <= 0.75) return "#fdae61";   // Medium (orange)
-    return "#1a9850";                     // High (green)
+    return "#d73027";                     // High (green)
 }
 
 		async function loadStateBoundary() {
-			const res = await fetch("/data/admin/display/geojson/state_boundary.geojson");
+			const res = await fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/geojson/state_boundary.geojson");
 			if (!res.ok) throw new Error("Failed to load state boundary");
 			const geojson = await res.json();
 
@@ -321,7 +321,7 @@ legend.addTo(map);
 		}
 
 		async function loadDistrictBoundary() {
-			const res = await fetch("/data/admin/display/geojson/district_boundary.geojson");
+			const res = await fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/geojson/district_boundary.geojson");
 			if (!res.ok) throw new Error("Failed to load district boundary");
 			const geojson = await res.json();
 
@@ -448,8 +448,8 @@ legend.addTo(map);
 			}
 
 			const selectedFile = `wqi_${year}_${month}.tif`;
-			const selectedUrl = `/data/admin/gnn/wqi_rasters/${selectedFile}`;
-			setStatus(`Loading raster ${selectedFile} ...`);
+			const selectedUrl = `https://star-boys-revenues-conversation.trycloudflare.com/data/admin/gnn/wqi_rasters/${selectedFile}`;
+			
 
 			const response = await fetch(selectedUrl + "?ts=" + Date.now());
 			if (!response.ok) throw new Error("Raster file could not be loaded");
@@ -492,7 +492,7 @@ legend.addTo(map);
 				updateStateBoundaryVisibility();
 			}
 			map.fitBounds(rasterLayer.getBounds());
-			setStatus(`Showing ${selectedFile} (min ${min.toFixed(3)}, max ${max.toFixed(3)})`);
+			
 		}
 
 		document.getElementById("loadRasterBtn").addEventListener("click", async () => {

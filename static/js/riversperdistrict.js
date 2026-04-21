@@ -1,6 +1,6 @@
 Promise.all([
-  fetch("/data/admin/display/geojson/district_boundary.geojson").then(r => r.json()),
-  fetch("/data/admin/display/geojson/narmada_named_network.geojson").then(r => r.json())
+  fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/geojson/district_boundary.geojson").then(r => r.json()),
+  fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/geojson/narmada_named_network.geojson").then(r => r.json())
 ]).then(([districts, rivers]) => {
 
   const tbody = document.querySelector("#resultTable tbody");
