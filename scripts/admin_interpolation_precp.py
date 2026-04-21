@@ -20,9 +20,10 @@ year_input = int(sys.argv[1])
 # PATHS
 # ======================================================
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_URL = "https://star-boys-revenues-conversation.trycloudflare.com/data"
 
 station_folder = os.path.join(BASE_DIR, "data","admin","display", "precip")
-narmada_geojson = os.path.join(BASE_DIR, "data","admin","display", "geojson", "narmada.geojson")
+narmada_geojson = f"{BASE_URL}/admin/display/geojson/narmada.geojson"
 output_folder = os.path.join(BASE_DIR, "data","admin","display", "precip", "output_precip_rasters")
 
 os.makedirs(output_folder, exist_ok=True)

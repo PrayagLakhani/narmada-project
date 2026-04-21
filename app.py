@@ -47,6 +47,19 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_UPLOAD = "data"
 os.makedirs(BASE_UPLOAD, exist_ok=True)
 
+
+def get_data_path(path):
+    return f"{BASE_URL}/{path.lstrip('/')}"
+
+
+def read_data_geofile(relative_path):
+    url = get_data_path(relative_path)
+    try:
+        return gpd.read_file(url)
+    except Exception:
+        local_path = os.path.join(BASE_DIR, "data", *relative_path.split("/"))
+        return gpd.read_file(local_path)
+
 @app.route("/")
 def home():
     return send_from_directory(os.path.join(BASE_DIR, "template"), "Home.html")
@@ -920,14 +933,8 @@ def admin_clip_temperature():
 @app.route("/api/admin-rivers-per-district")
 def admin_rivers_per_district():
     try:
-        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-        district_path = os.path.join(BASE_DIR, "data","admin","display", "geojson", "district_boundary.geojson")
-        river_path = os.path.join(BASE_DIR, "data","admin","display", "geojson", "narmada_named_network.geojson")
-
-
-        districts = gpd.read_file(district_path)
-        rivers = gpd.read_file(river_path)
+        districts = read_data_geofile("admin/display/geojson/district_boundary.geojson")
+        rivers = read_data_geofile("admin/display/geojson/narmada_named_network.geojson")
 
         if districts.crs is None:
             districts.set_crs("EPSG:4326", inplace=True)
@@ -980,8 +987,8 @@ def admin_districts():
     if district_cache is not None:
         return jsonify(district_cache)
 
-    districts_gdf = gpd.read_file(os.path.join(BASE_DIR, "data","admin","display", "geojson", "district_boundary.geojson")).to_crs("EPSG:4326")
-    narmada = gpd.read_file(os.path.join(BASE_DIR, "data","admin","display", "geojson", "narmada.geojson")).to_crs("EPSG:4326")
+    districts_gdf = read_data_geofile("admin/display/geojson/district_boundary.geojson").to_crs("EPSG:4326")
+    narmada = read_data_geofile("admin/display/geojson/narmada.geojson").to_crs("EPSG:4326")
     narmada_geom = narmada.geometry.union_all()
     filtered = districts_gdf[districts_gdf.intersects(narmada_geom)]
     district_cache = sorted(filtered["District"].dropna().unique().tolist())

@@ -20,9 +20,10 @@ collab_id=sys.argv[2]
 # PATHS
 # ======================================================
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_URL = "https://star-boys-revenues-conversation.trycloudflare.com/data"
 
 station_folder = os.path.join(BASE_DIR, "data","collaborator",collab_id,"display", "temp")
-narmada_geojson = os.path.join(BASE_DIR, "data","admin","display", "geojson", "narmada.geojson")
+narmada_geojson = f"{BASE_URL}/admin/display/geojson/narmada.geojson"
 output_folder = os.path.join(BASE_DIR, "data","collaborator",collab_id,"display", "temp", "output_temp_rasters")
 
 os.makedirs(output_folder, exist_ok=True)

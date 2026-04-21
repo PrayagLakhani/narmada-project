@@ -7,10 +7,30 @@ import json
 import os
 import re
 import pandas as pd
+import tempfile
+import urllib.request
 from shapely.geometry import Point
 
 
 MONTH_ORDER = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+BASE_URL = "https://star-boys-revenues-conversation.trycloudflare.com/data"
+
+
+def _data_url(relative_path):
+    return f"{BASE_URL}/{relative_path.lstrip('/')}"
+
+
+def _download_to_temp(relative_path, suffix):
+    fd, tmp_path = tempfile.mkstemp(suffix=suffix)
+    os.close(fd)
+    urllib.request.urlretrieve(_data_url(relative_path), tmp_path)
+    return tmp_path
+
+
+def _local_or_download(local_path, relative_path, suffix):
+    if os.path.exists(local_path):
+        return local_path
+    return _download_to_temp(relative_path, suffix)
 
 
 def _normalize_month_column(col_name):
@@ -172,10 +192,24 @@ def mean_two_rasters_for_district_in_narmada(
             path = os.path.join(raster_dir, name)
             if os.path.exists(path):
                 return path
+        for name in candidates:
+            rel = f"admin/display/raster/{name}"
+            try:
+                return _download_to_temp(rel, ".tif")
+            except Exception:
+                continue
         return os.path.join(raster_dir, primary_name)
 
-    district_geojson = os.path.join(BASE_DIR, "data", "admin", "display", "geojson", district_geojson)
-    narmada_geojson = os.path.join(BASE_DIR, "data", "admin", "display", "geojson", narmada_geojson)
+    district_geojson = _local_or_download(
+        os.path.join(BASE_DIR, "data", "admin", "display", "geojson", district_geojson),
+        f"admin/display/geojson/{district_geojson}",
+        ".geojson",
+    )
+    narmada_geojson = _local_or_download(
+        os.path.join(BASE_DIR, "data", "admin", "display", "geojson", narmada_geojson),
+        f"admin/display/geojson/{narmada_geojson}",
+        ".geojson",
+    )
     precip_raster = resolve_raster_path(precip_raster)
     temp_raster = resolve_raster_path(temp_raster, ["2011_2023_MEAN_TEMPERATURE.tif"])
 
