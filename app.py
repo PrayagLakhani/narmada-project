@@ -1116,7 +1116,8 @@ def admin_raster_range_meta():
         if not os.path.exists(raster_dir):
             return None
 
-        candidates = []
+        range_candidates = []
+        fallback_candidates = []
         for fname in os.listdir(raster_dir):
             lower = fname.lower()
             if not lower.endswith(".tif"):
@@ -1133,23 +1134,32 @@ def admin_raster_range_meta():
 
             import re
             match = re.match(r"^((?:19|20)\d{2})_((?:19|20)\d{2})_(.+)\.tif$", fname)
-            if not match:
-                continue
+            if match:
+                start_year = int(match.group(1))
+                end_year = int(match.group(2))
+                range_candidates.append((start_year, end_year, fname))
+            else:
+                fallback_candidates.append(fname)
 
-            start_year = int(match.group(1))
-            end_year = int(match.group(2))
-            candidates.append((start_year, end_year, fname))
+        if range_candidates:
+            # Prefer latest range if multiple files exist.
+            start_year, end_year, selected = sorted(range_candidates, key=lambda x: (x[0], x[1]))[-1]
+            return {
+                "file": selected,
+                "startYear": start_year,
+                "endYear": end_year,
+            }
 
-        if not candidates:
-            return None
+        if fallback_candidates:
+            # Fallback for files like precip_raster.tif/temp_raster.tif.
+            fallback_candidates.sort()
+            return {
+                "file": fallback_candidates[-1],
+                "startYear": None,
+                "endYear": None,
+            }
 
-        # Prefer latest range if multiple files exist.
-        start_year, end_year, selected = sorted(candidates, key=lambda x: (x[0], x[1]))[-1]
-        return {
-            "file": selected,
-            "startYear": start_year,
-            "endYear": end_year,
-        }
+        return None
 
     precip_meta = pick_file("precip")
     temp_meta = pick_file("temp")
@@ -2180,7 +2190,8 @@ def collaborator_raster_range_meta():
         if not os.path.exists(raster_dir):
             return None
 
-        candidates = []
+        range_candidates = []
+        fallback_candidates = []
         for fname in os.listdir(raster_dir):
             lower = fname.lower()
             if not lower.endswith(".tif"):
@@ -2197,22 +2208,30 @@ def collaborator_raster_range_meta():
 
             import re
             match = re.match(r"^((?:19|20)\d{2})_((?:19|20)\d{2})_(.+)\.tif$", fname)
-            if not match:
-                continue
+            if match:
+                start_year = int(match.group(1))
+                end_year = int(match.group(2))
+                range_candidates.append((start_year, end_year, fname))
+            else:
+                fallback_candidates.append(fname)
 
-            start_year = int(match.group(1))
-            end_year = int(match.group(2))
-            candidates.append((start_year, end_year, fname))
+        if range_candidates:
+            start_year, end_year, selected = sorted(range_candidates, key=lambda x: (x[0], x[1]))[-1]
+            return {
+                "file": selected,
+                "startYear": start_year,
+                "endYear": end_year,
+            }
 
-        if not candidates:
-            return None
+        if fallback_candidates:
+            fallback_candidates.sort()
+            return {
+                "file": fallback_candidates[-1],
+                "startYear": None,
+                "endYear": None,
+            }
 
-        start_year, end_year, selected = sorted(candidates, key=lambda x: (x[0], x[1]))[-1]
-        return {
-            "file": selected,
-            "startYear": start_year,
-            "endYear": end_year,
-        }
+        return None
 
     return jsonify({
         "precip": pick_file("precip"),
