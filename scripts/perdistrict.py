@@ -45,9 +45,7 @@ def _download_to_temp(relative_path, suffix):
         raise
 
 
-def _local_or_download(local_path, relative_path, suffix):
-    if os.path.exists(local_path):
-        return local_path
+def _remote_data_file(relative_path, suffix):
     return _download_to_temp(relative_path, suffix)
 
 
@@ -207,24 +205,18 @@ def mean_two_rasters_for_district_in_narmada(
     def resolve_raster_path(primary_name, alternatives=None):
         candidates = [primary_name] + (alternatives or [])
         for name in candidates:
-            path = os.path.join(raster_dir, name)
-            if os.path.exists(path):
-                return path
-        for name in candidates:
             rel = f"admin/display/raster/{name}"
             try:
                 return _download_to_temp(rel, ".tif")
             except Exception:
                 continue
-        return os.path.join(raster_dir, primary_name)
+        raise FileNotFoundError(f"Raster not available at data server: {candidates}")
 
-    district_geojson = _local_or_download(
-        os.path.join(BASE_DIR, "data", "admin", "display", "geojson", district_geojson),
+    district_geojson = _remote_data_file(
         f"admin/display/geojson/{district_geojson}",
         ".geojson",
     )
-    narmada_geojson = _local_or_download(
-        os.path.join(BASE_DIR, "data", "admin", "display", "geojson", narmada_geojson),
+    narmada_geojson = _remote_data_file(
         f"admin/display/geojson/{narmada_geojson}",
         ".geojson",
     )

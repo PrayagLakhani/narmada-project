@@ -53,12 +53,7 @@ def get_data_path(path):
 
 
 def read_data_geofile(relative_path):
-    url = get_data_path(relative_path)
-    try:
-        return gpd.read_file(url)
-    except Exception:
-        local_path = os.path.join(BASE_DIR, "data", *relative_path.split("/"))
-        return gpd.read_file(local_path)
+    return gpd.read_file(get_data_path(relative_path))
 
 @app.route("/")
 def home():

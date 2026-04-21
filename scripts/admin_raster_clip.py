@@ -36,22 +36,18 @@ def _download_to_temp(relative_path, suffix):
         raise
 
 
-def _local_or_download(local_path, relative_path, suffix):
-    if os.path.exists(local_path):
-        return local_path
+def _remote_data_file(relative_path, suffix):
     return _download_to_temp(relative_path, suffix)
 
 
 def admin_clip_precipitation_raster():
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-    input_raster = _local_or_download(
-        os.path.join(BASE_DIR, "data", "admin", "display", "raster", "2011_2023_Precipitation.tif"),
+    input_raster = _remote_data_file(
         "admin/display/raster/2011_2023_Precipitation.tif",
         ".tif",
     )
-    basin_geojson = _local_or_download(
-        os.path.join(BASE_DIR, "data", "admin", "display", "geojson", "narmada.geojson"),
+    basin_geojson = _remote_data_file(
         "admin/display/geojson/narmada.geojson",
         ".geojson",
     )
@@ -88,13 +84,11 @@ def admin_clip_precipitation_raster():
 def admin_clip_temperature_raster():
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-    input_raster = _local_or_download(
-        os.path.join(BASE_DIR, "data", "admin", "display", "raster", "2011_2023_Mean_Temperature.tif"),
+    input_raster = _remote_data_file(
         "admin/display/raster/2011_2023_Mean_Temperature.tif",
         ".tif",
     )
-    basin_geojson = _local_or_download(
-        os.path.join(BASE_DIR, "data", "admin", "display", "geojson", "narmada.geojson"),
+    basin_geojson = _remote_data_file(
         "admin/display/geojson/narmada.geojson",
         ".geojson",
     )
@@ -132,13 +126,11 @@ def admin_clip_temperature_raster():
 def collaborator_clip_precipitation_raster(collab_id):
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     
-    input_raster = _local_or_download(
-        os.path.join(BASE_DIR, "data", "collaborator", collab_id, "display", "raster", "precip_raster.tif"),
+    input_raster = _remote_data_file(
         f"collaborator/{collab_id}/display/raster/precip_raster.tif",
         ".tif",
     )
-    basin_geojson = _local_or_download(
-        os.path.join(BASE_DIR, "data", "collaborator", collab_id, "display", "geojson", "narmada.geojson"),
+    basin_geojson = _remote_data_file(
         f"collaborator/{collab_id}/display/geojson/narmada.geojson",
         ".geojson",
     )
@@ -175,13 +167,11 @@ def collaborator_clip_precipitation_raster(collab_id):
 def collaborator_clip_temperature_raster(collab_id):
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-    input_raster = _local_or_download(
-        os.path.join(BASE_DIR, "data", "collaborator", collab_id, "display", "raster", "temp_raster.tif"),
+    input_raster = _remote_data_file(
         f"collaborator/{collab_id}/display/raster/temp_raster.tif",
         ".tif",
     )
-    basin_geojson = _local_or_download(
-        os.path.join(BASE_DIR, "data", "collaborator", collab_id, "display", "geojson", "narmada.geojson"),
+    basin_geojson = _remote_data_file(
         f"collaborator/{collab_id}/display/geojson/narmada.geojson",
         ".geojson",
     )
