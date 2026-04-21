@@ -8,7 +8,8 @@ import os
 import re
 import pandas as pd
 import tempfile
-import urllib.request
+import hashlib
+import requests
 from shapely.geometry import Point
 
 
@@ -21,10 +22,27 @@ def _data_url(relative_path):
 
 
 def _download_to_temp(relative_path, suffix):
-    fd, tmp_path = tempfile.mkstemp(suffix=suffix)
-    os.close(fd)
-    urllib.request.urlretrieve(_data_url(relative_path), tmp_path)
-    return tmp_path
+    url = _data_url(relative_path)
+    cache_key = hashlib.sha256(url.encode("utf-8")).hexdigest()[:16]
+    cache_path = os.path.join(tempfile.gettempdir(), f"narmada_cache_{cache_key}{suffix}")
+
+    if os.path.exists(cache_path) and os.path.getsize(cache_path) > 0:
+        return cache_path
+
+    tmp_part = f"{cache_path}.part"
+    try:
+        with requests.get(url, stream=True, timeout=(10, 600)) as response:
+            response.raise_for_status()
+            with open(tmp_part, "wb") as out:
+                for chunk in response.iter_content(chunk_size=1024 * 1024):
+                    if chunk:
+                        out.write(chunk)
+        os.replace(tmp_part, cache_path)
+        return cache_path
+    except Exception:
+        if os.path.exists(tmp_part):
+            os.remove(tmp_part)
+        raise
 
 
 def _local_or_download(local_path, relative_path, suffix):

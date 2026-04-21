@@ -9,3 +9,4 @@ shapely
 fiona
 pyproj
 pymongo
+requests
