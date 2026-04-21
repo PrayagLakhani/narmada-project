@@ -23,7 +23,7 @@ except:
 # PATHS
 # =====================================================
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BASE_URL = "https://star-boys-revenues-conversation.trycloudflare.com/data"
+BASE_URL = os.getenv("DATA_BASE_URL", "https://star-boys-revenues-conversation.trycloudflare.com/data").rstrip("/")
 
 csv_relative_dir = "admin/display/streamflow"
 buffer_relative_dir = "admin/display/shp"
@@ -46,8 +46,14 @@ def _data_url(relative_path):
 
 def _list_remote_files(relative_dir, extension):
     index_url = _data_url(relative_dir) + "/"
-    response = requests.get(index_url, timeout=(10, 120))
-    response.raise_for_status()
+    try:
+        response = requests.get(index_url, timeout=(10, 120))
+        response.raise_for_status()
+    except requests.exceptions.RequestException as exc:
+        raise RuntimeError(
+            f"Unable to list remote directory: {index_url}. "
+            f"Check DATA_BASE_URL and DNS/network reachability."
+        ) from exc
     hrefs = re.findall(r'href=["\']([^"\']+)["\']', response.text, flags=re.IGNORECASE)
     files = []
     for href in hrefs:
@@ -59,12 +65,19 @@ def _list_remote_files(relative_dir, extension):
 
 
 def _download_remote_file(relative_path, local_path):
-    response = requests.get(_data_url(relative_path), stream=True, timeout=(10, 300))
-    response.raise_for_status()
-    with open(local_path, "wb") as out:
-        for chunk in response.iter_content(chunk_size=1024 * 1024):
-            if chunk:
-                out.write(chunk)
+    url = _data_url(relative_path)
+    try:
+        response = requests.get(url, stream=True, timeout=(10, 300))
+        response.raise_for_status()
+        with open(local_path, "wb") as out:
+            for chunk in response.iter_content(chunk_size=1024 * 1024):
+                if chunk:
+                    out.write(chunk)
+    except requests.exceptions.RequestException as exc:
+        raise RuntimeError(
+            f"Unable to download remote file: {url}. "
+            f"Check DATA_BASE_URL and DNS/network reachability."
+        ) from exc
 
 
 def _prepare_remote_buffer_shapefile():

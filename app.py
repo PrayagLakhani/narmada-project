@@ -37,7 +37,7 @@ from scripts.admin_raster_clip import (
 )
 
 app = Flask(__name__, template_folder="template")
-BASE_URL = "https://star-boys-revenues-conversation.trycloudflare.com/data"
+BASE_URL = os.getenv("DATA_BASE_URL", "https://star-boys-revenues-conversation.trycloudflare.com/data").rstrip("/")
 CORS(app)
 district_cache = None
 mean_cache = {}
@@ -53,7 +53,14 @@ def get_data_path(path):
 
 
 def read_data_geofile(relative_path):
-    return gpd.read_file(get_data_path(relative_path))
+    url = get_data_path(relative_path)
+    try:
+        return gpd.read_file(url)
+    except Exception as exc:
+        raise RuntimeError(
+            f"Unable to fetch geofile from data server: {url}. "
+            f"Check DATA_BASE_URL and DNS/network reachability."
+        ) from exc
 
 @app.route("/")
 def home():

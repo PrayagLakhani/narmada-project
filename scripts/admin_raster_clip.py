@@ -5,7 +5,7 @@ import hashlib
 import requests
 
 
-BASE_URL = "https://star-boys-revenues-conversation.trycloudflare.com/data"
+BASE_URL = os.getenv("DATA_BASE_URL", "https://star-boys-revenues-conversation.trycloudflare.com/data").rstrip("/")
 
 
 def _data_url(relative_path):
@@ -30,10 +30,13 @@ def _download_to_temp(relative_path, suffix):
                         out.write(chunk)
         os.replace(tmp_part, cache_path)
         return cache_path
-    except Exception:
+    except requests.exceptions.RequestException as exc:
         if os.path.exists(tmp_part):
             os.remove(tmp_part)
-        raise
+        raise RuntimeError(
+            f"Unable to download remote data file: {url}. "
+            f"Check DATA_BASE_URL and DNS/network reachability."
+        ) from exc
 
 
 def _remote_data_file(relative_path, suffix):

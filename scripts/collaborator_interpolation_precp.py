@@ -21,7 +21,7 @@ collab_id=sys.argv[2]
 # PATHS
 # ======================================================
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BASE_URL = "https://star-boys-revenues-conversation.trycloudflare.com/data"
+BASE_URL = os.getenv("DATA_BASE_URL", "https://star-boys-revenues-conversation.trycloudflare.com/data").rstrip("/")
 
 station_folder = os.path.join(BASE_DIR, "data","collaborator",collab_id,"display", "precip")
 narmada_geojson = f"{BASE_URL}/admin/display/geojson/narmada.geojson"
