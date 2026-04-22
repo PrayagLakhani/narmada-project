@@ -3,12 +3,13 @@ import subprocess
 import tempfile
 
 
-def clip_precipitation_raster():
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DATA = r"O:\data"
 
-    input_raster = os.path.join(BASE_DIR, "data", "raster", "2011_2023_Precipitation.tif")
-    basin_geojson = os.path.join(BASE_DIR, "data", "geojson", "narmada.geojson")
-    output_raster = os.path.join(BASE_DIR, "data", "raster", "precip_clipped.tif")
+
+def clip_precipitation_raster():
+    input_raster = os.path.join(BASE_DATA, "raster", "2011_2023_Precipitation.tif")
+    basin_geojson = os.path.join(BASE_DATA, "geojson", "narmada.geojson")
+    output_raster = os.path.join(BASE_DATA, "raster", "precip_clipped.tif")
 
     valid_geojson = os.path.join(tempfile.gettempdir(), "narmada_valid.geojson")
 
@@ -38,11 +39,9 @@ def clip_precipitation_raster():
 
 
 def clip_temperature_raster():
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-    input_raster = os.path.join(BASE_DIR, "data", "raster", "2011_2023_Mean_Temperature.tif")
-    basin_geojson = os.path.join(BASE_DIR, "data", "geojson", "narmada.geojson")
-    output_raster = os.path.join(BASE_DIR, "data", "raster", "temp_clipped.tif")
+    input_raster = os.path.join(BASE_DATA, "raster", "2011_2023_Mean_Temperature.tif")
+    basin_geojson = os.path.join(BASE_DATA, "geojson", "narmada.geojson")
+    output_raster = os.path.join(BASE_DATA, "raster", "temp_clipped.tif")
 
     valid_geojson = os.path.join(tempfile.gettempdir(), "narmada_valid.geojson")
 

@@ -1,8 +1,6 @@
 import os
 import sys
 import re
-import tempfile
-import urllib.parse
 import pandas as pd
 import geopandas as gpd
 import numpy as np
@@ -11,7 +9,6 @@ from rasterio.transform import from_origin
 from rasterio.features import rasterize
 from scipy.spatial.distance import cdist
 from shapely.ops import unary_union
-import requests
 
 # Progress bar
 try:
@@ -22,14 +19,11 @@ except:
 # =====================================================
 # PATHS
 # =====================================================
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BASE_URL = os.getenv("DATA_BASE_URL", "").rstrip("/")
-if not BASE_URL:
-    raise RuntimeError("DATA_BASE_URL environment variable is required.")
+BASE_DATA = r"O:\data"
 
-csv_relative_dir = "admin/display/waterlevel"
-buffer_relative_dir = "admin/display/shp"
-output_folder = os.path.join(BASE_DIR, "data","admin","display", "waterlevel", "output_waterlevel_rasters")
+csv_dir = os.path.join(BASE_DATA, "admin", "display", "waterlevel")
+buffer_dir = os.path.join(BASE_DATA, "admin", "display", "shp")
+output_folder = os.path.join(BASE_DATA, "admin", "display", "waterlevel", "output_waterlevel_rasters")
 
 year_input = int(sys.argv[1])
 input_month=(sys.argv[2])
@@ -42,74 +36,24 @@ power = 2
 os.makedirs(output_folder, exist_ok=True)
 
 
-def _data_url(relative_path):
-    return f"{BASE_URL}/{relative_path.lstrip('/')}"
-
-
-def _list_remote_files(relative_dir, extension):
-    index_url = _data_url(relative_dir) + "/"
-    try:
-        response = requests.get(index_url, timeout=(10, 120))
-        response.raise_for_status()
-    except requests.exceptions.RequestException as exc:
-        raise RuntimeError(
-            f"Unable to list remote directory: {index_url}. "
-            f"Check DATA_BASE_URL and DNS/network reachability."
-        ) from exc
-    hrefs = re.findall(r'href=["\']([^"\']+)["\']', response.text, flags=re.IGNORECASE)
-    files = []
-    for href in hrefs:
-        parsed = urllib.parse.urlparse(href)
-        candidate = parsed.path.split("/")[-1]
-        if candidate.lower().endswith(extension.lower()):
-            files.append(candidate)
-    return sorted(set(files))
-
-
-def _download_remote_file(relative_path, local_path):
-    url = _data_url(relative_path)
-    try:
-        response = requests.get(url, stream=True, timeout=(10, 300))
-        response.raise_for_status()
-        with open(local_path, "wb") as out:
-            for chunk in response.iter_content(chunk_size=1024 * 1024):
-                if chunk:
-                    out.write(chunk)
-    except requests.exceptions.RequestException as exc:
-        raise RuntimeError(
-            f"Unable to download remote file: {url}. "
-            f"Check DATA_BASE_URL and DNS/network reachability."
-        ) from exc
-
-
-def _prepare_remote_buffer_shapefile():
-    temp_dir = tempfile.mkdtemp(prefix="narmada_buf_")
-    base_name = "narmada_buffer_1000m"
-    for ext in [".shp", ".shx", ".dbf", ".prj", ".cpg"]:
-        rel = f"{buffer_relative_dir}/{base_name}{ext}"
-        local = os.path.join(temp_dir, f"{base_name}{ext}")
-        try:
-            _download_remote_file(rel, local)
-        except Exception:
-            if ext in {".shp", ".shx", ".dbf"}:
-                raise
-    return os.path.join(temp_dir, f"{base_name}.shp")
+def _local_buffer_shapefile():
+    return os.path.join(buffer_dir, "narmada_buffer_1000m.shp")
 
 # =====================================================
 # STEP 1: READ ALL STATION CSV FILES
 # =====================================================
 print("Reading station CSV files...")
 
-remote_csv_files = _list_remote_files(csv_relative_dir, ".csv")
+csv_files = sorted([f for f in os.listdir(csv_dir) if f.lower().endswith(".csv")])
 
-if len(remote_csv_files) == 0:
+if len(csv_files) == 0:
     print("❌ No CSV files found in folder")
     exit()
 
 df_list = []
 skipped_files = []
 
-for csv_name in remote_csv_files:
+for csv_name in csv_files:
     # Extract lon/lat from filename tail: ..._<lon>_<lat>.csv
     filename = os.path.basename(csv_name)
     stem = filename.replace(".csv", "")
@@ -126,7 +70,7 @@ for csv_name in remote_csv_files:
         skipped_files.append(f"{filename} (invalid lon/lat range)")
         continue
 
-    temp_df = pd.read_csv(_data_url(f"{csv_relative_dir}/{filename}"))
+    temp_df = pd.read_csv(os.path.join(csv_dir, filename))
 
     if "Year" not in temp_df.columns:
         skipped_files.append(f"{filename} (missing Year column)")
@@ -180,7 +124,7 @@ gdf = gpd.GeoDataFrame(
 # =====================================================
 print("Reading buffer shapefile...")
 
-buffer_shp = _prepare_remote_buffer_shapefile()
+buffer_shp = _local_buffer_shapefile()
 buffer = gpd.read_file(buffer_shp).to_crs(gdf.crs)
 
 # DO NOT buffer again

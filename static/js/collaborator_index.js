@@ -1,11 +1,13 @@
 /* ================= SAFE HELPERS ================= */
+const DATA_BASE_URL = "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev";
+const dataUrl = (path) => `${DATA_BASE_URL}/${String(path).replace(/^\/+/, "")}`;
 
 async function getcollabid(){
 const res = await fetch("/api/get-collab-id");
     const data = await res.json();   // ✅ IMPORTANT
 
     const COLLAB_ID = data.collab_id; // adjust key if needed
-    return `https://star-boys-revenues-conversation.trycloudflare.com/data/collaborator/${COLLAB_ID}/display`;
+  return dataUrl(`/collaborator/${COLLAB_ID}/display`);
 }
 let BASE_PATH = null;
 
@@ -97,49 +99,49 @@ function registerLayer(layer, name, addByDefault = false) {
 }
 
 // ---------- STATE ----------
-fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/geojson/state_boundary.geojson").then(r => r.json()).then(data => {
+fetch(dataUrl("admin/display/geojson/state_boundary.geojson")).then(r => r.json()).then(data => {
   const layer = L.geoJSON(data, { style: { color: "#000", weight: 2, fillOpacity: 0.4 }, onEachFeature: (f, l) => l.bindPopup(popupContent(f.properties)) });
   registerLayer(layer, "State Boundary", true); layer.bringToBack(); map.fitBounds(layer.getBounds());
 });
 
 // ---------- DISTRICT ----------
-fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/geojson/district_boundary.geojson").then(r => r.json()).then(data => {
+fetch(dataUrl("admin/display/geojson/district_boundary.geojson")).then(r => r.json()).then(data => {
   const layer = L.geoJSON(data, { style: { color: "#444", weight: 1, fillOpacity: 0.2 }, onEachFeature: (f, l) => l.bindPopup(popupContent(f.properties)) });
   registerLayer(layer, "District Boundary");
 });
 
 // ---------- NARMADA POLYGON ----------
-fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/geojson/narmada.geojson").then(r => r.json()).then(data => {
+fetch(dataUrl("admin/display/geojson/narmada.geojson")).then(r => r.json()).then(data => {
   const layer = L.geoJSON(data, { style: { color: "blue", fillOpacity: 0.2 }, onEachFeature: (f, l) => l.bindPopup(popupContent(f.properties)) });
   registerLayer(layer, "Narmada Polygon", true); layer.bringToBack();
 });
 
 // ---------- RIVER NETWORK ----------
-fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/geojson/narmada_named_network.geojson").then(r => r.json()).then(data => {
+fetch(dataUrl("admin/display/geojson/narmada_named_network.geojson")).then(r => r.json()).then(data => {
   const layer = L.geoJSON(data, { style: { color: "cyan", weight: 1.5 }, onEachFeature: (f, l) => l.bindPopup(popupContent(f.properties)) });
   registerLayer(layer, "Named River Network", true);
 });
 
 // ---------- CENTERLINE ----------
-fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/geojson/narmada_centerline.geojson").then(r => r.json()).then(data => {
+fetch(dataUrl("admin/display/geojson/narmada_centerline.geojson")).then(r => r.json()).then(data => {
   const layer = L.geoJSON(data, { style: { color: "navy", weight: 3 }, onEachFeature: (f, l) => l.bindPopup(popupContent(f.properties)) });
   registerLayer(layer, "Narmada Centerline", true); layer.bringToFront();
 });
 
 // ---------- STATE HQ ----------
-fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/geojson/state_hq.geojson").then(r => r.json()).then(data => {
+fetch(dataUrl("admin/display/geojson/state_hq.geojson")).then(r => r.json()).then(data => {
   const layer = L.geoJSON(data, { pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 6, color: "red", fillOpacity: 1 }), onEachFeature: (f, l) => l.bindPopup(popupContent(f.properties)) });
   registerLayer(layer, "State HQ");
 });
 
 // ---------- DISTRICT HQ ----------
-fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/geojson/district_hq.geojson").then(r => r.json()).then(data => {
+fetch(dataUrl("admin/display/geojson/district_hq.geojson")).then(r => r.json()).then(data => {
   const layer = L.geoJSON(data, { pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 4, color: "darkred", fillOpacity: 1 }), onEachFeature: (f, l) => l.bindPopup(popupContent(f.properties)) });
   registerLayer(layer, "District HQ");
 });
 
 // ---------- MAJOR TOWNS ----------
-fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/geojson/major_towns.geojson").then(r => r.json()).then(data => {
+fetch(dataUrl("admin/display/geojson/major_towns.geojson")).then(r => r.json()).then(data => {
   const layer = L.geoJSON(data, { pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 3, color: "orange", fillOpacity: 1 }), onEachFeature: (f, l) => l.bindPopup(popupContent(f.properties)) });
   registerLayer(layer, "Major Towns");
 });

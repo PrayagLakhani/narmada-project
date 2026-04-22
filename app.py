@@ -11,6 +11,7 @@ import sys
 import pandas as pd
 import random
 import smtplib
+from datetime import datetime, timezone
 from email.mime.text import MIMEText
 from flask import session
 from werkzeug.utils import secure_filename
@@ -27,7 +28,7 @@ import smtplib
 from email.mime.text import MIMEText
 from flask import session, request, redirect, render_template
 from flask import Flask, render_template, request, redirect, session
-from pymongo import MongoClient
+from pymongo import MongoClient, ReturnDocument, ASCENDING
 from scripts.admin_raster_clip import (
     admin_clip_precipitation_raster,
     admin_clip_temperature_raster,
@@ -39,7 +40,7 @@ from scripts.admin_raster_clip import (
 app = Flask(__name__, template_folder="template")
 BASE_URL = os.getenv("DATA_BASE_URL", "").rstrip("/")
 if not BASE_URL:
-    raise RuntimeError("DATA_BASE_URL environment variable is required.")
+    print("WARNING: DATA_BASE_URL is not set. Configure DATA_BASE_URL in env vars (no tunnel fallback is used).")
 # Keep subprocess scripts in sync with the API's configured data server.
 os.environ["DATA_BASE_URL"] = BASE_URL
 CORS(app)
@@ -52,7 +53,44 @@ BASE_UPLOAD = "data"
 os.makedirs(BASE_UPLOAD, exist_ok=True)
 
 
+def _utc_now_iso():
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _jobs_collection():
+    return db[os.getenv("JOBS_COLLECTION", "jobs_queue")]
+
+
+def _next_job_id():
+    counter = db["counters"].find_one_and_update(
+        {"_id": "jobs_queue"},
+        {"$inc": {"seq": 1}},
+        upsert=True,
+        return_document=ReturnDocument.AFTER,
+    )
+    return int(counter["seq"])
+
+
+def _serialize_job(job_doc):
+    if not job_doc:
+        return None
+    return {
+        "id": job_doc.get("id"),
+        "type": job_doc.get("type"),
+        "params": job_doc.get("params", {}),
+        "status": job_doc.get("status"),
+        "created_at": job_doc.get("created_at"),
+        "claimed_at": job_doc.get("claimed_at"),
+        "completed_at": job_doc.get("completed_at"),
+        "worker": job_doc.get("worker"),
+        "result": job_doc.get("result"),
+        "error": job_doc.get("error"),
+    }
+
+
 def get_data_path(path):
+    if not BASE_URL:
+        raise RuntimeError("DATA_BASE_URL is not configured. Set DATA_BASE_URL to your permanent data host.")
     return f"{BASE_URL}/{path.lstrip('/')}"
 
 
@@ -65,6 +103,150 @@ def read_data_geofile(relative_path):
             f"Unable to fetch geofile from data server: {url}. "
             f"Check DATA_BASE_URL and DNS/network reachability."
         ) from exc
+
+
+@app.route("/create-job", methods=["POST"])
+def create_job():
+    data = request.get_json(silent=True) or {}
+
+    job_type = data.get("type", "clip_precip")
+    params = data.get("params") if isinstance(data.get("params"), dict) else data
+
+    job = {
+        "id": _next_job_id(),
+        "type": job_type,
+        "params": params,
+        "status": "pending",
+        "created_at": _utc_now_iso(),
+        "claimed_at": None,
+        "completed_at": None,
+        "worker": None,
+        "result": None,
+        "error": None,
+    }
+
+    try:
+        _jobs_collection().insert_one(job)
+    except Exception as exc:
+        return jsonify({"error": f"Failed to create job: {exc}"}), 500
+
+    return jsonify(job), 201
+
+
+@app.route("/get-jobs", methods=["GET"])
+def get_jobs():
+    status = (request.args.get("status") or "pending").strip().lower()
+
+    try:
+        if status == "all":
+            docs = list(_jobs_collection().find({}).sort("id", 1))
+        else:
+            docs = list(_jobs_collection().find({"status": status}).sort("id", 1))
+    except Exception as exc:
+        return jsonify({"error": f"Failed to list jobs: {exc}"}), 500
+
+    result = [_serialize_job(doc) for doc in docs]
+    return jsonify(result)
+
+
+@app.route("/claim-job", methods=["POST"])
+def claim_job():
+    data = request.get_json(silent=True) or {}
+    requested_id = data.get("id")
+    worker_name = (data.get("worker") or "worker").strip()
+
+    try:
+        if requested_id is not None:
+            try:
+                requested_id = int(requested_id)
+            except (TypeError, ValueError):
+                return jsonify({"error": "Invalid job id"}), 400
+
+            target = _jobs_collection().find_one_and_update(
+                {"id": requested_id, "status": "pending"},
+                {
+                    "$set": {
+                        "status": "processing",
+                        "worker": worker_name,
+                        "claimed_at": _utc_now_iso(),
+                    }
+                },
+                return_document=ReturnDocument.AFTER,
+            )
+            if target is None:
+                existing = _jobs_collection().find_one({"id": requested_id}, {"id": 1, "status": 1})
+                if existing is None:
+                    return jsonify({"error": "Job not found"}), 404
+                return jsonify({"error": "Job is not pending"}), 409
+        else:
+            target = _jobs_collection().find_one_and_update(
+                {"status": "pending"},
+                {
+                    "$set": {
+                        "status": "processing",
+                        "worker": worker_name,
+                        "claimed_at": _utc_now_iso(),
+                    }
+                },
+                sort=[("id", ASCENDING)],
+                return_document=ReturnDocument.AFTER,
+            )
+            if target is None:
+                return jsonify({"error": "No pending jobs"}), 404
+    except Exception as exc:
+        return jsonify({"error": f"Failed to claim job: {exc}"}), 500
+
+    return jsonify(_serialize_job(target))
+
+
+@app.route("/complete-job", methods=["POST"])
+def complete_job():
+    data = request.get_json(silent=True) or {}
+
+    if "id" not in data:
+        return jsonify({"error": "Job id is required"}), 400
+
+    try:
+        job_id = int(data["id"])
+    except (TypeError, ValueError):
+        return jsonify({"error": "Invalid job id"}), 400
+
+    new_status = (data.get("status") or "done").strip().lower()
+    if new_status not in {"done", "failed"}:
+        return jsonify({"error": "Status must be done or failed"}), 400
+
+    try:
+        job = _jobs_collection().find_one_and_update(
+            {"id": job_id},
+            {
+                "$set": {
+                    "status": new_status,
+                    "result": data.get("result"),
+                    "error": data.get("error"),
+                    "completed_at": _utc_now_iso(),
+                }
+            },
+            return_document=ReturnDocument.AFTER,
+        )
+    except Exception as exc:
+        return jsonify({"error": f"Failed to update job: {exc}"}), 500
+
+    if job is None:
+        return jsonify({"error": "Job not found"}), 404
+
+    return jsonify(_serialize_job(job))
+
+
+@app.route("/job-status/<int:job_id>", methods=["GET"])
+def job_status(job_id):
+    try:
+        job = _jobs_collection().find_one({"id": job_id})
+    except Exception as exc:
+        return jsonify({"error": f"Failed to read job: {exc}"}), 500
+
+    if job is None:
+        return jsonify({"error": "not found"}), 404
+    return jsonify(_serialize_job(job))
 
 @app.route("/")
 def home():
@@ -1192,6 +1374,12 @@ MONGO_URI = "mongodb+srv://Maahick:Mahi2323@cluster0.hfs9kyb.mongodb.net/yelpcam
 client = MongoClient(MONGO_URI)
 db = client["narmada_project"]
 collaborators = db["collaborators"]
+
+try:
+    _jobs_collection().create_index([("id", ASCENDING)], unique=True)
+    _jobs_collection().create_index([("status", ASCENDING), ("id", ASCENDING)])
+except Exception as exc:
+    print(f"WARNING: Unable to ensure queue indexes: {exc}")
 
 # ================== COLLABORATOR LOGIN + REGISTER ==================
 @app.route("/collaborator/login", methods=["GET", "POST"])

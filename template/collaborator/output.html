@@ -308,8 +308,11 @@ legend.addTo(map);
     return "#d73027";                     // High (green)
 }
 
+        const DATA_BASE_URL = "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev";
+        const dataUrl = (path) => `${DATA_BASE_URL}/${String(path).replace(/^\/+/, "")}`;
+
         async function loadStateBoundary() {
-            const res = await fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/geojson/state_boundary.geojson");
+            const res = await fetch(dataUrl("admin/display/geojson/state_boundary.geojson"));
             if (!res.ok) throw new Error("Failed to load state boundary");
             const geojson = await res.json();
 
@@ -321,7 +324,7 @@ legend.addTo(map);
         }
 
         async function loadDistrictBoundary() {
-            const res = await fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/geojson/district_boundary.geojson");
+            const res = await fetch(dataUrl("admin/display/geojson/district_boundary.geojson"));
             if (!res.ok) throw new Error("Failed to load district boundary");
             const geojson = await res.json();
 
@@ -449,7 +452,7 @@ legend.addTo(map);
 
             const selectedFile = `wqi_${year}_${month}.tif`;
             const collab_id=await fetch("/api/get-collab-id").then(res => res.json()).then(data => data.collab_id);
-            const selectedUrl = `https://star-boys-revenues-conversation.trycloudflare.com/data/collaborator/${collab_id}/gnn/wqi_rasters/${selectedFile}`;
+            const selectedUrl = dataUrl(`/collaborator/${collab_id}/gnn/wqi_rasters/${selectedFile}`);
             
 
             const response = await fetch(selectedUrl + "?ts=" + Date.now());

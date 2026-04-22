@@ -1,4 +1,6 @@
 // ================= COLOR CLASSIFICATION =================
+const DATA_BASE_URL = "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev";
+const dataUrl = (path) => `${DATA_BASE_URL}/${String(path).replace(/^\/+/, "")}`;
 
 // Precipitation breaks (mm) – adjust if needed
 const PRECIP_BREAKS = [800, 1000, 1200, 1400, 1700];
@@ -74,49 +76,49 @@ function registerLayer(layer, name, addByDefault = false) {
 }
 
 // ---------- STATE ----------
-fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/geojson/state_boundary.geojson").then(r => r.json()).then(data => {
+fetch(dataUrl("admin/display/geojson/state_boundary.geojson")).then(r => r.json()).then(data => {
   const layer = L.geoJSON(data, { style: { color: "#000", weight: 2, fillOpacity: 0.4 }, onEachFeature: (f, l) => l.bindPopup(popupContent(f.properties)) });
   registerLayer(layer, "State Boundary", true); layer.bringToBack(); map.fitBounds(layer.getBounds());
 });
 
 // ---------- DISTRICT ----------
-fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/geojson/district_boundary.geojson").then(r => r.json()).then(data => {
+fetch(dataUrl("admin/display/geojson/district_boundary.geojson")).then(r => r.json()).then(data => {
   const layer = L.geoJSON(data, { style: { color: "#444", weight: 1, fillOpacity: 0.2 }, onEachFeature: (f, l) => l.bindPopup(popupContent(f.properties)) });
   registerLayer(layer, "District Boundary");
 });
 
 // ---------- NARMADA POLYGON ----------
-fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/geojson/narmada.geojson").then(r => r.json()).then(data => {
+fetch(dataUrl("admin/display/geojson/narmada.geojson")).then(r => r.json()).then(data => {
   const layer = L.geoJSON(data, { style: { color: "blue", fillOpacity: 0.2 }, onEachFeature: (f, l) => l.bindPopup(popupContent(f.properties)) });
   registerLayer(layer, "Narmada Polygon", true); layer.bringToBack();
 });
 
 // ---------- RIVER NETWORK ----------
-fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/geojson/narmada_named_network.geojson").then(r => r.json()).then(data => {
+fetch(dataUrl("admin/display/geojson/narmada_named_network.geojson")).then(r => r.json()).then(data => {
   const layer = L.geoJSON(data, { style: { color: "cyan", weight: 1.5 }, onEachFeature: (f, l) => l.bindPopup(popupContent(f.properties)) });
   registerLayer(layer, "Named River Network", true);
 });
 
 // ---------- CENTERLINE ----------
-fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/geojson/narmada_centerline.geojson").then(r => r.json()).then(data => {
+fetch(dataUrl("admin/display/geojson/narmada_centerline.geojson")).then(r => r.json()).then(data => {
   const layer = L.geoJSON(data, { style: { color: "navy", weight: 3 }, onEachFeature: (f, l) => l.bindPopup(popupContent(f.properties)) });
   registerLayer(layer, "Narmada Centerline", true); layer.bringToFront();
 });
 
 // ---------- STATE HQ ----------
-fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/geojson/state_hq.geojson").then(r => r.json()).then(data => {
+fetch(dataUrl("admin/display/geojson/state_hq.geojson")).then(r => r.json()).then(data => {
   const layer = L.geoJSON(data, { pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 6, color: "red", fillOpacity: 1 }), onEachFeature: (f, l) => l.bindPopup(popupContent(f.properties)) });
   registerLayer(layer, "State HQ");
 });
 
 // ---------- DISTRICT HQ ----------
-fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/geojson/district_hq.geojson").then(r => r.json()).then(data => {
+fetch(dataUrl("admin/display/geojson/district_hq.geojson")).then(r => r.json()).then(data => {
   const layer = L.geoJSON(data, { pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 4, color: "darkred", fillOpacity: 1 }), onEachFeature: (f, l) => l.bindPopup(popupContent(f.properties)) });
   registerLayer(layer, "District HQ");
 });
 
 // ---------- MAJOR TOWNS ----------
-fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/geojson/major_towns.geojson").then(r => r.json()).then(data => {
+fetch(dataUrl("admin/display/geojson/major_towns.geojson")).then(r => r.json()).then(data => {
   const layer = L.geoJSON(data, { pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 3, color: "orange", fillOpacity: 1 }), onEachFeature: (f, l) => l.bindPopup(popupContent(f.properties)) });
   registerLayer(layer, "Major Towns");
 });
@@ -506,7 +508,7 @@ function getRangeLabel(kind) {
 function getRangeFileUrl(kind) {
   const meta = rasterRangeMeta[kind];
   if (!meta || !meta.file) return null;
-  return `https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/raster/${meta.file}`;
+  return dataUrl(`admin/display/raster/${meta.file}`);
 }
 
 async function loadAdminRasterRangeMeta() {
@@ -696,7 +698,7 @@ document.addEventListener("click", async function (e) {
     const r = await fetch("/api/admin-clip-precip");
     if (!r.ok) return alert("Error");
 
-    const t = await fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/raster/precip_clipped.tif?ts=" + Date.now());
+    const t = await fetch(dataUrl("admin/display/raster/precip_clipped.tif") + "?ts=" + Date.now());
     const b = await t.arrayBuffer();
     const g = await parseGeoraster(b);
 
@@ -739,7 +741,7 @@ document.addEventListener("click", async function (e) {
     const r = await fetch("/api/admin-clip-temperature");
     if (!r.ok) return alert("Error");
 
-    const t = await fetch("https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/raster/temp_clipped.tif?ts=" + Date.now());
+    const t = await fetch(dataUrl("admin/display/raster/temp_clipped.tif") + "?ts=" + Date.now());
     const b = await t.arrayBuffer();
     const g = await parseGeoraster(b);
 
@@ -845,7 +847,7 @@ document.addEventListener("click", async function (e) {
 
     await fetch(`/api/admin-generate-precip-year?year=${year}`);
 
-    const t = await fetch(`https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/precip/output_precip_rasters/precip_${year}_30m.tif?ts=${Date.now()}`);
+    const t = await fetch(dataUrl(`admin/display/precip/output_precip_rasters/precip_${year}_30m.tif`) + `?ts=${Date.now()}`);
     const b = await t.arrayBuffer();
     const g = await parseGeoraster(b);
 
@@ -898,7 +900,7 @@ document.addEventListener("click", async function (e) {
 
     await fetch(`/api/admin-generate-temp-year?year=${year}`);
 
-    const t = await fetch(`https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/temp/output_temp_rasters/temp_${year}_30m.tif?ts=${Date.now()}`);
+    const t = await fetch(dataUrl(`admin/display/temp/output_temp_rasters/temp_${year}_30m.tif`) + `?ts=${Date.now()}`);
     const b = await t.arrayBuffer();
     const g = await parseGeoraster(b);
 
@@ -934,7 +936,7 @@ document.addEventListener("click", async function (e) {
     const year = document.getElementById("LulcYear").value;
     if (!year) return alert("Select year");
 
-    const t = await fetch(`https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/raster/lulc/lulc_${year}.tif?ts=${Date.now()}`);
+    const t = await fetch(dataUrl(`admin/display/raster/lulc/lulc_${year}.tif`) + `?ts=${Date.now()}`);
     const b = await t.arrayBuffer();
     const g = await parseGeoraster(b);
     const min = g.mins[0];
@@ -983,7 +985,7 @@ document.addEventListener("click", async function (e) {
     const year = document.getElementById("PopYear").value;
     if (!year) return alert("Select year");
 
-    const t = await fetch(`https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/raster/pop/pop_${year}.tif?ts=${Date.now()}`);
+    const t = await fetch(dataUrl(`admin/display/raster/pop/pop_${year}.tif`) + `?ts=${Date.now()}`);
     const b = await t.arrayBuffer();
     const g = await parseGeoraster(b);
     const min = g.mins[0];
@@ -1035,7 +1037,7 @@ document.addEventListener("click", async function (e) {
 
     await fetch(`/api/admin-generate-streamflow-year?year=${year}&month=${month}`);
 
-    const t = await fetch(`https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/streamflow/output_streamflow_rasters/streamflow_${year}_${month}_30m.tif?ts=${Date.now()}`);
+    const t = await fetch(dataUrl(`admin/display/streamflow/output_streamflow_rasters/streamflow_${year}_${month}_30m.tif`) + `?ts=${Date.now()}`);
     const b = await t.arrayBuffer();
     const g = await parseGeoraster(b);
 
@@ -1089,7 +1091,7 @@ document.addEventListener("click", async function (e) {
 
     await fetch(`/api/admin-generate-waterlevel-year?year=${year}&month=${month}`);
 
-    const t = await fetch(`https://star-boys-revenues-conversation.trycloudflare.com/data/admin/display/waterlevel/output_waterlevel_rasters/waterlevel_${year}_${month}_30m.tif?ts=${Date.now()}`);
+    const t = await fetch(dataUrl(`admin/display/waterlevel/output_waterlevel_rasters/waterlevel_${year}_${month}_30m.tif`) + `?ts=${Date.now()}`);
     const b = await t.arrayBuffer();
     const g = await parseGeoraster(b);
     const min = g.mins[0];
