@@ -18,8 +18,10 @@ BUCKET = "narmada-project"
 s3 = boto3.client(
     "s3",
     endpoint_url="https://0b772396ab70ea0cd591dfa63b52316b.r2.cloudflarestorage.com",
-    aws_access_key_id=os.environ["49d1528387711ac01001b28e753de9b8"],
-    aws_secret_access_key=os.environ["c5fc7491597429c1d73108ccf8d89754c1894523d4b80e21b3795eb9b296ea84"]
+    # aws_access_key_id=os.environ["49d1528387711ac01001b28e753de9b8"],
+    # aws_secret_access_key=os.environ["c5fc7491597429c1d73108ccf8d89754c1894523d4b80e21b3795eb9b296ea84"]
+    aws_access_key_id=os.environ["R2_ACCESS_KEY"],
+    aws_secret_access_key=os.environ["R2_SECRET_KEY"]
 )
 
 def download_file(url, local_path):
