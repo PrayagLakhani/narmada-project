@@ -58,11 +58,12 @@ def admin_clip_precipitation_raster():
             "gdalwarp",
             "-cutline", valid_geojson,
             "-crop_to_cutline",
-            "-wm", "128",
+            "-wm", "64",            # 🔽 reduce memory (IMPORTANT)
+            "-multi",               # parallel processing
+            "-wo", "NUM_THREADS=ALL_CPUS",
             "-of", "GTiff",
             "-co", "TILED=YES",
             "-co", "COMPRESS=DEFLATE",
-            "-co", "BIGTIFF=YES",
             "-overwrite",
             local_raster,
             output_raster
@@ -98,7 +99,9 @@ def admin_clip_temperature_raster():
             "gdalwarp",
             "-cutline", valid_geojson,
             "-crop_to_cutline",
-            "-wm", "128",
+            "-wm", "64",
+            "-multi",
+            "-wo", "NUM_THREADS=ALL_CPUS",
             "-of", "GTiff",
             "-co", "TILED=YES",
             "-co", "COMPRESS=DEFLATE",
