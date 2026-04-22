@@ -103,10 +103,21 @@ function registerLayer(layer, name, addByDefault = false) {
 }
 
 // ---------- STATE ----------
-fetch(dataUrl("admin/display/geojson/state_boundary.geojson")).then(r => r.json()).then(data => {
-  const layer = L.geoJSON(data, { style: { color: "#000", weight: 2, fillOpacity: 0.4 }, onEachFeature: (f, l) => l.bindPopup(popupContent(f.properties)) });
-  registerLayer(layer, "State Boundary", true); layer.bringToBack(); map.fitBounds(layer.getBounds());
-});
+const url = dataUrl("admin/display/geojson/state_boundary.geojson");
+console.log("FETCHING:", url);
+
+fetch(url)
+  .then(r => {
+    console.log("STATUS:", r.status);
+    return r.json();
+  })
+  .then(data => {
+    console.log("DATA RECEIVED:", data);
+
+    const layer = L.geoJSON(data).addTo(map);
+    map.fitBounds(layer.getBounds());
+  })
+  .catch(err => console.error("ERROR:", err));
 
 // ---------- DISTRICT ----------
 fetch(dataUrl("admin/display/geojson/district_boundary.geojson")).then(r => r.json()).then(data => {
