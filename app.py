@@ -30,7 +30,7 @@ from flask import session, request, redirect, render_template
 from flask import Flask, render_template, request, redirect, session
 from pymongo import MongoClient, ReturnDocument, ASCENDING
 from scripts.admin_raster_clip import (
-    # admin_clip_precipitation_raster,
+    admin_clip_precipitation_raster,
     admin_clip_temperature_raster,
     collaborator_clip_precipitation_raster,
     collaborator_clip_temperature_raster
@@ -1096,14 +1096,14 @@ def admin_generate_waterlevel_year():
 
 
 
-# @app.route("/api/admin-clip-precip")
-# def admin_clip_precip():
-#     try:
-#         admin_clip_precipitation_raster()
-#         return jsonify({"message": "Precipitation raster clipped successfully"})
-#     except Exception as e:
-#         traceback.print_exc()
-#         return jsonify({"error": str(e)}), 500
+@app.route("/api/admin-clip-precip")
+def admin_clip_precip():
+    try:
+        admin_clip_precipitation_raster()
+        return jsonify({"message": "Precipitation raster clipped successfully"})
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
 
 
 

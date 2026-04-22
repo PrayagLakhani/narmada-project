@@ -699,8 +699,8 @@ document.addEventListener("click", async function (e) {
   // ================= CLIP PRECIP =================
   if (e.target.id === "clipPrecipBtn") {
     removeAllRasters(); 
-    // const r = await fetch(`${API_BASE}/api/admin-clip-precip`);
-    // if (!r.ok) return alert("Error");
+    const r = await fetch(`${API_BASE}/api/admin-clip-precip`);
+    if (!r.ok) return alert("Error");
 
     const t = await fetch(`${dataUrl}admin/display/raster/precip_clipped.tif?ts=${Date.now()}`);
     const b = await t.arrayBuffer();
@@ -742,8 +742,8 @@ document.addEventListener("click", async function (e) {
   // ================= CLIP TEMP =================
   else if (e.target.id === "clipTempBtn") {
     removeAllRasters();
-    // const r = await fetch(`${API_BASE}/api/admin-clip-temperature`);
-    // if (!r.ok) return alert("Error");
+    const r = await fetch(`${API_BASE}/api/admin-clip-temperature`);
+    if (!r.ok) return alert("Error");
 
     const t = await fetch(`${dataUrl}admin/display/raster/temp_clipped.tif?ts=${Date.now()}`);
     const b = await t.arrayBuffer();
@@ -849,7 +849,7 @@ document.addEventListener("click", async function (e) {
     const year = document.getElementById("precipYear").value;
     if (!year) return alert("Select year");
 
-    // await fetch(`${API_BASE}/api/admin-generate-precip-year?year=${year}`);
+    await fetch(`${API_BASE}/api/admin-generate-precip-year?year=${year}`);
 
     const t = await fetch(`${dataUrl}admin/display/precip/output_precip_rasters/precip_${year}_30m.tif?ts=${Date.now()}`);
     const b = await t.arrayBuffer();
@@ -902,7 +902,7 @@ document.addEventListener("click", async function (e) {
     const year = document.getElementById("tempYear").value;
     if (!year) return alert("Select year");
 
-    // await fetch(`${API_BASE}/api/admin-generate-temp-year?year=${year}`);
+    await fetch(`${API_BASE}/api/admin-generate-temp-year?year=${year}`);
 
     const t = await fetch(`${dataUrl}admin/display/temp/output_temp_rasters/temp_${year}_30m.tif?ts=${Date.now()}`);
     const b = await t.arrayBuffer();
@@ -1039,7 +1039,7 @@ document.addEventListener("click", async function (e) {
     const month = document.getElementById("StreamFlowMonth").value;
     if (!year) return alert("Select year");
 
-    // await fetch(`${API_BASE}/api/admin-generate-streamflow-year?year=${year}&month=${month}`);
+    await fetch(`${API_BASE}/api/admin-generate-streamflow-year?year=${year}&month=${month}`);
 
     const t = await fetch(`${dataUrl}admin/display/streamflow/output_streamflow_rasters/streamflow_${year}_${month}_30m.tif?ts=${Date.now()}`);
     const b = await t.arrayBuffer();
@@ -1093,7 +1093,7 @@ document.addEventListener("click", async function (e) {
     const month = document.getElementById("WaterLevelMonth").value;
     if (!year) return alert("Select year");
 
-    // await fetch(`${API_BASE}/api/admin-generate-waterlevel-year?year=${year}&month=${month}`);
+    await fetch(`${API_BASE}/api/admin-generate-waterlevel-year?year=${year}&month=${month}`);
 
     const t = await fetch(`${dataUrl}admin/display/waterlevel/output_waterlevel_rasters/waterlevel_${year}_${month}_30m.tif?ts=${Date.now()}`);
     const b = await t.arrayBuffer();
@@ -1176,7 +1176,7 @@ async function populateYearsDynamic(selectId, dataset) {
   if (!select) return;
 
   try {
-    // const res = await fetch(`${API_BASE}/api/admin-get-years/${dataset}`);
+    const res = await fetch(`${API_BASE}/api/admin-get-years/${dataset}`);
     const years = await res.json();
 
     select.innerHTML = ""; // clear old
