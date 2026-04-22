@@ -1,9 +1,12 @@
 /* ================= SAFE HELPERS ================= */
-const DATA_BASE_URL = "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev";
-const dataUrl = (path) => `${DATA_BASE_URL}/${String(path).replace(/^\/+/, "")}`;
+const BASE_URL = "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev";
+const dataUrl = (path) =>
+  `${BASE_URL}/${String(path).replace(/^\/+/, "")}`;
+
+const API_BASE = "https://narmada-project-qf03.onrender.com";
 
 async function getcollabid(){
-const res = await fetch("/api/get-collab-id");
+const res = await fetch(`${API_BASE}/api/get-collab-id`);
     const data = await res.json();   // ✅ IMPORTANT
 
     const COLLAB_ID = data.collab_id; // adjust key if needed
@@ -539,7 +542,7 @@ function getRangeFileUrl(kind) {
 
 async function loadCollaboratorRasterRangeMeta() {
   try {
-    const res = await fetch("/api/collaborator-raster-range-meta");
+    const res = await fetch('${API_BASE}/api/collaborator-raster-range-meta');
     if (!res.ok) return;
 
     const data = await res.json();
@@ -703,7 +706,7 @@ document.addEventListener("click", async function (e) {
 
   // ================= CLIP PRECIP =================
   if (e.target.id === "clipPrecipBtn") {
-    const r = await fetch("/api/collaborator-clip-precip");
+    const r = await fetch(`${API_BASE}/api/collaborator-clip-precip`);
     if (!r.ok) return alert("Error");
 
     const t = await fetch(`${BASE_PATH}/raster/precip_clipped.tif?ts=` + Date.now());
@@ -739,7 +742,7 @@ document.addEventListener("click", async function (e) {
 
   // ================= CLIP TEMP =================
   if (e.target.id === "clipTempBtn") {
-    const r = await fetch("/api/collaborator-clip-temperature");
+    const r = await fetch(`${API_BASE}/api/collaborator-clip-temperature`);
     if (!r.ok) return alert("Error");
 
     const t = await fetch(`${BASE_PATH}/raster/temp_clipped.tif?ts=` + Date.now());
@@ -838,9 +841,9 @@ document.addEventListener("click", async function (e) {
     const year = document.getElementById("precipYear").value;
     if (!year) return alert("Select year");
 
-    await fetch(`/api/collaborator-generate-precip-year?year=${year}`);
+    await fetch(`${API_BASE}/api/collaborator-generate-precip-year?year=${year}`);
 
-    const t = await fetch(`${BASE_PATH}/precip/output_precip_rasters/precip_${year}_30m.tif?ts=${Date.now()}`);
+    const t = await fetch(`${BASE_URL}/precip/output_precip_rasters/precip_${year}_30m.tif?ts=${Date.now()}`);
     const b = await t.arrayBuffer();
     const g = await parseGeoraster(b);
 
@@ -1028,7 +1031,7 @@ document.addEventListener("click", async function (e) {
     const month = document.getElementById("StreamFlowMonth").value;
     if (!year) return alert("Select year");
 
-    await fetch(`/api/collaborator-generate-streamflow-year?year=${year}&month=${month}`);
+    await fetch(`${API_BASE}/api/collaborator-generate-streamflow-year?year=${year}&month=${month}`);
 
     const t = await fetch(`${BASE_PATH}/streamflow/output_streamflow_rasters/streamflow_${year}_${month}_30m.tif?ts=${Date.now()}`);
     const b = await t.arrayBuffer();
@@ -1082,7 +1085,7 @@ document.addEventListener("click", async function (e) {
     const month = document.getElementById("WaterLevelMonth").value;
     if (!year) return alert("Select year");
 
-    await fetch(`/api/collaborator-generate-waterlevel-year?year=${year}&month=${month}`);
+    await fetch(`${API_BASE}/api/collaborator-generate-waterlevel-year?year=${year}&month=${month}`);
 
     const t = await fetch(`${BASE_PATH}/waterlevel/output_waterlevel_rasters/waterlevel_${year}_${month}_30m.tif?ts=${Date.now()}`);
     const b = await t.arrayBuffer();
@@ -1219,7 +1222,7 @@ function populateMonths(id) {
 
   months.forEach(m => {
     const opt = document.createElement("option");
-    opt.value = m.name;
+    opt.value = m.value;
     opt.textContent = m.name;
     select.appendChild(opt);
   });

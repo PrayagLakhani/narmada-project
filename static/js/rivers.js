@@ -1,3 +1,7 @@
+
+const API_BASE = "https://narmada-project-qf03.onrender.com";
+
+
 function loadRiverData() {
   const status = document.getElementById("status");
   const tbody = document.getElementById("riverTableBody");
@@ -5,7 +9,7 @@ function loadRiverData() {
   status.textContent = "Loading data...";
   tbody.innerHTML = "";
 
-  fetch("/api/admin-rivers-per-district")
+  fetch(`${API_BASE}/api/admin-rivers-per-district`)
     .then(res => res.json())
     .then(data => {
       data.forEach(d => {

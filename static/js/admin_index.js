@@ -1,6 +1,11 @@
 // ================= COLOR CLASSIFICATION =================
-const DATA_BASE_URL = "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev";
-const dataUrl = (path) => `${DATA_BASE_URL}/${String(path).replace(/^\/+/, "")}`;
+// const DATA_BASE_URL = "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev";
+export const BASE_URL = "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev";
+const dataUrl = (path) =>
+  `${BASE_URL}/${String(path).replace(/^\/+/, "")}`;
+
+const API_BASE = "https://narmada-project-qf03.onrender.com";
+
 
 // Precipitation breaks (mm) – adjust if needed
 const PRECIP_BREAKS = [800, 1000, 1200, 1400, 1700];
@@ -513,8 +518,8 @@ function getRangeFileUrl(kind) {
 
 async function loadAdminRasterRangeMeta() {
   try {
-    const res = await fetch("/api/admin-raster-range-meta");
-    if (!res.ok) return;
+    const res = await fetch(`${API_BASE}/api/admin-raster-range-meta`);
+      if (!res.ok) return;
 
     const data = await res.json();
     rasterRangeMeta.precip = data?.precip || null;
@@ -695,10 +700,19 @@ document.addEventListener("click", async function (e) {
   // ================= CLIP PRECIP =================
   if (e.target.id === "clipPrecipBtn") {
     removeAllRasters(); 
-    const r = await fetch("/api/admin-clip-precip");
-    if (!r.ok) return alert("Error");
-
-    const t = await fetch(dataUrl("admin/display/raster/precip_clipped.tif") + "?ts=" + Date.now());
+    const r = await fetch(`${API_BASE}/api/admin-clip-precip`);
+    if (!r.ok) return alert("Error generating raster");
+    const url = dataUrl("admin/display/raster/precip_clipped.tif");
+    let t;
+    for (let i = 0; i < 5; i++) {
+      t = await fetch(`${url}?ts=${Date.now()}`);
+      if (t.ok) break;
+      await new Promise(res => setTimeout(res, 1000));
+    }
+    if (!t || !t.ok) {
+      alert("Raster not ready yet. Try again.");
+      return;
+    }
     const b = await t.arrayBuffer();
     const g = await parseGeoraster(b);
 
@@ -738,10 +752,19 @@ document.addEventListener("click", async function (e) {
   // ================= CLIP TEMP =================
   else if (e.target.id === "clipTempBtn") {
     removeAllRasters();
-    const r = await fetch("/api/admin-clip-temperature");
+    const r = await fetch(`${API_BASE}/api/admin-clip-temperature`);
     if (!r.ok) return alert("Error");
-
-    const t = await fetch(dataUrl("admin/display/raster/temp_clipped.tif") + "?ts=" + Date.now());
+    const url = dataUrl("admin/display/raster/temp_clipped.tif");
+    let t;
+    for (let i = 0; i < 5; i++) {
+      t = await fetch(`${url}?ts=${Date.now()}`);
+      if (t.ok) break;
+      await new Promise(res => setTimeout(res, 1000));
+    }
+    if (!t || !t.ok) {
+      alert("Raster not ready yet. Try again.");
+      return;
+    }
     const b = await t.arrayBuffer();
     const g = await parseGeoraster(b);
 
@@ -845,9 +868,19 @@ document.addEventListener("click", async function (e) {
     const year = document.getElementById("precipYear").value;
     if (!year) return alert("Select year");
 
-    await fetch(`/api/admin-generate-precip-year?year=${year}`);
+    await fetch(`${API_BASE}/api/admin-generate-precip-year?year=${year}`);
 
-    const t = await fetch(dataUrl(`admin/display/precip/output_precip_rasters/precip_${year}_30m.tif`) + `?ts=${Date.now()}`);
+    const url = dataUrl(`admin/display/precip/output_precip_rasters/precip_${year}_30m.tif`);
+    let t;
+    for (let i = 0; i < 5; i++) {
+      t = await fetch(`${url}?ts=${Date.now()}`);
+      if (t.ok) break;
+      await new Promise(res => setTimeout(res, 1000));
+    }
+    if (!t || !t.ok) {
+      alert("Raster not ready yet. Try again.");
+      return;
+    }
     const b = await t.arrayBuffer();
     const g = await parseGeoraster(b);
 
@@ -898,9 +931,19 @@ document.addEventListener("click", async function (e) {
     const year = document.getElementById("tempYear").value;
     if (!year) return alert("Select year");
 
-    await fetch(`/api/admin-generate-temp-year?year=${year}`);
+    await fetch(`${API_BASE}/api/admin-generate-temp-year?year=${year}`);
 
-    const t = await fetch(dataUrl(`admin/display/temp/output_temp_rasters/temp_${year}_30m.tif`) + `?ts=${Date.now()}`);
+    const url = dataUrl(`admin/display/temp/output_temp_rasters/temp_${year}_30m.tif`);
+    let t;
+    for (let i = 0; i < 5; i++) {
+      t = await fetch(`${url}?ts=${Date.now()}`);
+      if (t.ok) break;
+      await new Promise(res => setTimeout(res, 1000));
+    }
+    if (!t || !t.ok) {
+      alert("Raster not ready yet. Try again.");
+      return;
+    }
     const b = await t.arrayBuffer();
     const g = await parseGeoraster(b);
 
@@ -936,7 +979,17 @@ document.addEventListener("click", async function (e) {
     const year = document.getElementById("LulcYear").value;
     if (!year) return alert("Select year");
 
-    const t = await fetch(dataUrl(`admin/display/raster/lulc/lulc_${year}.tif`) + `?ts=${Date.now()}`);
+    const url = dataUrl(`admin/display/raster/lulc/lulc_${year}.tif`);
+    let t;
+    for (let i = 0; i < 5; i++) {
+      t = await fetch(`${url}?ts=${Date.now()}`);
+      if (t.ok) break;
+      await new Promise(res => setTimeout(res, 1000));
+    }
+    if (!t || !t.ok) {
+      alert("Raster not ready yet. Try again.");
+      return;
+    }
     const b = await t.arrayBuffer();
     const g = await parseGeoraster(b);
     const min = g.mins[0];
@@ -985,7 +1038,17 @@ document.addEventListener("click", async function (e) {
     const year = document.getElementById("PopYear").value;
     if (!year) return alert("Select year");
 
-    const t = await fetch(dataUrl(`admin/display/raster/pop/pop_${year}.tif`) + `?ts=${Date.now()}`);
+    const url = dataUrl(`admin/display/raster/pop/pop_${year}.tif`);
+    let t;
+    for (let i = 0; i < 5; i++) {
+      t = await fetch(`${url}?ts=${Date.now()}`);
+      if (t.ok) break;
+      await new Promise(res => setTimeout(res, 1000));
+    }
+    if (!t || !t.ok) {
+      alert("Raster not ready yet. Try again.");
+      return;
+    }
     const b = await t.arrayBuffer();
     const g = await parseGeoraster(b);
     const min = g.mins[0];
@@ -1035,9 +1098,20 @@ document.addEventListener("click", async function (e) {
     const month = document.getElementById("StreamFlowMonth").value;
     if (!year) return alert("Select year");
 
-    await fetch(`/api/admin-generate-streamflow-year?year=${year}&month=${month}`);
+    await fetch(`${API_BASE}/api/admin-generate-streamflow-year?year=${year}&month=${month}`);
 
-    const t = await fetch(dataUrl(`admin/display/streamflow/output_streamflow_rasters/streamflow_${year}_${month}_30m.tif`) + `?ts=${Date.now()}`);
+    const url = dataUrl(`admin/display/streamflow/output_streamflow_rasters/streamflow_${year}_${month}_30m.tif`);
+    let t;
+    for (let i = 0; i < 5; i++) {
+      t = await fetch(`${url}?ts=${Date.now()}`);
+      if (t.ok) break;
+      await new Promise(res => setTimeout(res, 1000));
+    }
+    if (!t || !t.ok) {
+      alert("Raster not ready yet. Try again.");
+      return;
+    }
+
     const b = await t.arrayBuffer();
     const g = await parseGeoraster(b);
 
@@ -1089,9 +1163,19 @@ document.addEventListener("click", async function (e) {
     const month = document.getElementById("WaterLevelMonth").value;
     if (!year) return alert("Select year");
 
-    await fetch(`/api/admin-generate-waterlevel-year?year=${year}&month=${month}`);
+    await fetch(`${API_BASE}/api/admin-generate-waterlevel-year?year=${year}&month=${month}`);
 
-    const t = await fetch(dataUrl(`admin/display/waterlevel/output_waterlevel_rasters/waterlevel_${year}_${month}_30m.tif`) + `?ts=${Date.now()}`);
+    const url = dataUrl(`admin/display/waterlevel/output_waterlevel_rasters/waterlevel_${year}_${month}_30m.tif`);
+    let t;
+    for (let i = 0; i < 5; i++) {
+      t = await fetch(`${url}?ts=${Date.now()}`);
+      if (t.ok) break;
+      await new Promise(res => setTimeout(res, 1000));
+    }
+    if (!t || !t.ok) {
+      alert("Raster not ready yet. Try again.");
+      return;
+    }
     const b = await t.arrayBuffer();
     const g = await parseGeoraster(b);
     const min = g.mins[0];
@@ -1172,7 +1256,7 @@ async function populateYearsDynamic(selectId, dataset) {
   if (!select) return;
 
   try {
-    const res = await fetch(`/api/admin-get-years/${dataset}`);
+    const res = await fetch(`${API_BASE}/api/admin-get-years/${dataset}`);
     const years = await res.json();
 
     select.innerHTML = ""; // clear old
@@ -1217,7 +1301,7 @@ function populateMonths(id) {
 
   months.forEach(m => {
     const opt = document.createElement("option");
-    opt.value = m.name;
+    opt.value = m.value;
     opt.textContent = m.name;
     select.appendChild(opt);
   });

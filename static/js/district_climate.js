@@ -1,5 +1,8 @@
 // Load districts
-fetch("/api/admin-districts")
+
+const API_BASE = "https://narmada-project-qf03.onrender.com";
+
+fetch(`${API_BASE}/api/admin-districts`)
 .then(res => res.json())
 .then(data => {
   const dropdown = document.getElementById("districtDropdown");
@@ -26,7 +29,7 @@ function calculate() {
 
   status.innerText = "Calculating...";
 
-  fetch(`/api/admin-mean?district=${encodeURIComponent(district)}`)
+  fetch(`${API_BASE}/api/admin-mean?district=${encodeURIComponent(district)}`)
   .then(res => res.json())
   .then(data => {
 
