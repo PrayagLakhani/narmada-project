@@ -293,9 +293,9 @@
         legend.onAdd = function () {
     const div = L.DomUtil.create("div", "wqi-legend");
     div.innerHTML = "<b>WQI Ratio</b><br>"
-        + "<div><span class='swatch' style='background:#1a9850'></span>Low (&lt; 0.5)</div>"
+        + "<div><span class='swatch' style='background:#d73027'></span>Low (&lt; 0.5)</div>"
         + "<div><span class='swatch' style='background:#fdae61'></span>Medium (0.5 - 0.75)</div>"
-        + "<div><span class='swatch' style='background:#d73027'></span>High (&gt; 0.75)</div>";
+        + "<div><span class='swatch' style='background:#1a9850'></span>High (&gt; 0.75)</div>";
     return div;
 };
 legend.addTo(map);
@@ -303,9 +303,9 @@ legend.addTo(map);
         function getWqiColorByRatio(ratio) {
     if (ratio === null || ratio === undefined || Number.isNaN(ratio)) return null;
 
-    if (ratio < 0.5) return "#1a9850";     // Low (reddish)
+    if (ratio < 0.5) return "#d73027";     // Low (reddish)
     if (ratio <= 0.75) return "#fdae61";   // Medium (orange)
-    return "#d73027";                     // High (green)
+    return "#1a9850";                     // High (green)
 }
 
         const DATA_BASE_URL = "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev";
