@@ -360,7 +360,7 @@ def run_admin_gnn_pipeline():
             return jsonify({"error": "Unauthorized"}), 401
         return render_template("admin/login.html", error="You are not Authorised . Login First ")
 
-    scripts_dir = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "data", "admin", "gnn")
+    scripts_dir = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "admin", "gnn")
     ordered_scripts = [
         "app.py",
         "app_testing.py",
@@ -372,8 +372,8 @@ def run_admin_gnn_pipeline():
     candidate_pythons = [
         os.path.join(scripts_dir, "venv", "bin", "python"),
         os.path.join(scripts_dir, "venv", "Scripts", "python.exe"),
-        os.path.join(BASE_DIR, "data", "admin", "gnn", "venv", "bin", "python"),
-        os.path.join(BASE_DIR, "data", "admin", "gnn", "venv", "Scripts", "python.exe"),
+        os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "admin", "gnn", "venv", "bin", "python"),
+        os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "admin", "gnn", "venv", "Scripts", "python.exe"),
         os.path.join(BASE_DIR, ".venv", "Scripts", "python.exe"),
         os.path.join(BASE_DIR, ".venv", "bin", "python"),
         sys.executable,
@@ -448,7 +448,7 @@ def admin_gnn_wqi_rasters():
     if "admin-logged-in" not in session:
         return jsonify({"error": "Unauthorized"}), 401
 
-    raster_dir = os.path.join(BASE_DIR, "data", "admin", "gnn", "wqi_rasters")
+    raster_dir = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "admin", "gnn", "wqi_rasters")
     month_order = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
     if not os.path.exists(raster_dir):
@@ -493,7 +493,7 @@ def admin_gnn_wqi_rasters():
 
 @app.route("/api/viewer-gnn-wqi-rasters", methods=["GET"])
 def viewer_gnn_wqi_rasters():
-    raster_dir = os.path.join(BASE_DIR, "data", "admin", "gnn", "wqi_rasters")
+    raster_dir = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "admin", "gnn", "wqi_rasters")
     month_order = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
     if not os.path.exists(raster_dir):
@@ -541,7 +541,7 @@ def collaborator_gnn_wqi_rasters():
     if "collab_id" not in session:
         return jsonify({"error": "Unauthorized"}), 401
     collab_id=session['collab_id']
-    raster_dir = os.path.join(BASE_DIR, "data", "collaborator",collab_id, "gnn", "wqi_rasters")
+    raster_dir = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "collaborator", collab_id, "gnn", "wqi_rasters")
     month_order = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
     if not os.path.exists(raster_dir):
@@ -624,7 +624,7 @@ def admin_clear_display():
         return jsonify({"error": "Unauthorized"}), 401
 
     try:
-        folder_path = os.path.join(BASE_DIR, "data", "admin", "display")
+        folder_path = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "admin", "display")
         clear_directory_contents(folder_path)
         return jsonify({"message": "Display directory cleared"}), 200
     except Exception as e:
@@ -637,7 +637,7 @@ def admin_clear_training():
         return jsonify({"error": "Unauthorized"}), 401
 
     try:
-        folder_path = os.path.join(BASE_DIR, "data", "admin", "gnn", "training_input")
+        folder_path = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "admin", "gnn", "training_input")
         clear_directory_contents(folder_path)
         return jsonify({"message": "Training directory cleared"}), 200
     except Exception as e:
@@ -650,7 +650,7 @@ def admin_clear_testing():
         return jsonify({"error": "Unauthorized"}), 401
 
     try:
-        folder_path = os.path.join(BASE_DIR, "data", "admin", "gnn", "testing_input")
+        folder_path = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "admin", "gnn", "testing_input")
         clear_directory_contents(folder_path)
         return jsonify({"message": "Testing directory cleared"}), 200
     except Exception as e:
@@ -671,15 +671,15 @@ def admin_upload_testing_data():
         type_config = {
             "csv": {
                 "extension": ".csv",
-                "folder": os.path.join(BASE_DIR, "data", "admin", "gnn", "testing_input")
+                "folder": os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "admin", "gnn", "testing_input")
             },
             "lulc": {
                 "extension": ".tif",
-                "folder": os.path.join(BASE_DIR, "data", "admin", "gnn", "testing_input", "lulc")
+                "folder": os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "admin", "gnn", "testing_input", "lulc")
             },
             "pop": {
                 "extension": ".tif",
-                "folder": os.path.join(BASE_DIR, "data", "admin", "gnn", "testing_input", "pop")
+                "folder": os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "admin", "gnn", "testing_input", "pop")
             }
         }
 
@@ -721,8 +721,7 @@ def update_all_stations_training():
                 return jsonify({"error": f"Only .tif files allowed for {upload_type}"}), 400
 
             raster_upload_folder = os.path.join(
-                BASE_DIR,
-                "data",
+                "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev",
                 "admin",
                 "gnn",
                 "training_input",
@@ -753,7 +752,7 @@ def update_all_stations_training():
 
         df.set_index("station", inplace=True)
 
-        BASE = os.path.join(BASE_DIR, "data", "admin", "gnn", "training_input")
+        BASE = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "admin", "gnn", "training_input")
 
         month_map = {
             "1": "Jan", "2": "Feb", "3": "Mar",
@@ -823,8 +822,7 @@ def update_all_stations_display():
                 return jsonify({"error": f"Only .tif files allowed for {upload_type}"}), 400
 
             raster_upload_folder = os.path.join(
-                BASE_DIR,
-                "data",
+                "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev",
                 "admin",
                 "display",
                 "raster",
@@ -855,7 +853,7 @@ def update_all_stations_display():
 
         df.set_index("station", inplace=True)
 
-        BASE = os.path.join(BASE_DIR, "data", "admin", "display")
+        BASE = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "admin", "display")
 
         month_map = {
             "1": "Jan", "2": "Feb", "3": "Mar",
@@ -933,8 +931,7 @@ def admin_generate_precip_year():
 
         
         raster_path = os.path.join(
-            BASE_DIR,
-            "data",
+            "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev",
             "admin",
             "display",
             "precip",
@@ -979,8 +976,7 @@ def admin_generate_temp_year():
 
         
         raster_path = os.path.join(
-            BASE_DIR,
-            "data",
+            "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev",
             "admin",
             "display",
             "temp",
@@ -1024,8 +1020,7 @@ def admin_generate_streamflow_year():
 
         
         raster_path = os.path.join(
-            BASE_DIR,
-            "data",
+            "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev",
             "admin",
             "display",
             "streamflow",
@@ -1069,8 +1064,7 @@ def admin_generate_waterlevel_year():
 
         
         raster_path = os.path.join(
-            BASE_DIR,
-            "data",
+            "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev",
             "admin",
             "display",
             "waterlevel",
@@ -1215,7 +1209,7 @@ def admin_mean():
 @app.route("/api/admin-get-years/<dataset>")
 def admin_get_years(dataset):
 
-    base_path = os.path.join(BASE_DIR, "data", "admin", "display")
+    base_path = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "admin", "display")
 
     try:
 
@@ -1305,7 +1299,7 @@ def admin_get_years(dataset):
 
 @app.route("/api/admin-raster-range-meta", methods=["GET"])
 def admin_raster_range_meta():
-    raster_dir = os.path.join(BASE_DIR, "data", "admin", "display", "raster")
+    raster_dir = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "admin", "display", "raster")
 
     def pick_file(kind):
         if not os.path.exists(raster_dir):
@@ -1409,7 +1403,7 @@ def collaborator_login():
             collab_id = str(new_user.inserted_id)
 
             # 🔥 CREATE FOLDER STRUCTURE
-            base_path = os.path.join(BASE_DIR, "data", "collaborator", collab_id)
+            base_path = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "collaborator", collab_id)
 
             os.makedirs(os.path.join(base_path, "display"), exist_ok=True)
             os.makedirs(os.path.join(base_path,"gnn" , "training_input"), exist_ok=True)
@@ -1476,7 +1470,7 @@ def collaborator_clear_display():
         return jsonify({"error": "Unauthorized"}), 401
 
     try:
-        folder_path = os.path.join(BASE_DIR, "data", "collaborator", session["collab_id"], "display")
+        folder_path = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "collaborator", session["collab_id"], "display")
         clear_directory_contents(folder_path)
         return jsonify({"message": "Display directory cleared"}), 200
     except Exception as e:
@@ -1488,7 +1482,7 @@ def collaborator_clear_training():
         return jsonify({"error": "Unauthorized"}), 401
 
     try:
-        folder_path = os.path.join(BASE_DIR, "data", "collaborator", session["collab_id"], "gnn", "training_input")
+        folder_path = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "collaborator", session["collab_id"], "gnn", "training_input")
         clear_directory_contents(folder_path)
         return jsonify({"message": "Training directory cleared"}), 200
     except Exception as e:
@@ -1500,7 +1494,7 @@ def collaborator_clear_testing():
         return jsonify({"error": "Unauthorized"}), 401
 
     try:
-        folder_path = os.path.join(BASE_DIR, "data", "collaborator", session["collab_id"], "gnn", "testing_input")
+        folder_path = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "collaborator", session["collab_id"], "gnn", "testing_input")
         clear_directory_contents(folder_path)
         return jsonify({"message": "Testing directory cleared"}), 200
     except Exception as e:
@@ -1532,8 +1526,8 @@ def run_collaborator_gnn_pipeline():
             return jsonify({"error": "Unauthorized"}), 401
         return render_template("collaborator/login.html", error="You are not Authorised . Login First ")
     collab_id=session['collab_id']
-    scripts_dir = os.path.join(BASE_DIR, "data", "collaborator", "gnn")
-    collab_gnn_dir = os.path.join(BASE_DIR, "data", "collaborator", collab_id, "gnn")
+    scripts_dir = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "collaborator", "gnn")
+    collab_gnn_dir = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "collaborator", collab_id, "gnn")
     required_streamflow_dir = os.path.join(collab_gnn_dir, "training_input", "streamflow")
 
     if not os.path.exists(required_streamflow_dir):
@@ -1553,8 +1547,8 @@ def run_collaborator_gnn_pipeline():
     candidate_pythons = [
         os.path.join(scripts_dir, "venv", "bin", "python"),
         os.path.join(scripts_dir, "venv", "Scripts", "python.exe"),
-        os.path.join(BASE_DIR, "data", "admin", "gnn", "venv", "bin", "python"),
-        os.path.join(BASE_DIR, "data", "admin", "gnn", "venv", "Scripts", "python.exe"),
+        os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "admin", "gnn", "venv", "bin", "python"),
+        os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "admin", "gnn", "venv", "Scripts", "python.exe"),
         os.path.join(BASE_DIR, ".venv", "Scripts", "python.exe"),
         os.path.join(BASE_DIR, ".venv", "bin", "python"),
         sys.executable,
@@ -1634,15 +1628,15 @@ def collaborator_upload_testing_data():
         type_config = {
             "csv": {
                 "extension": ".csv",
-                "folder": os.path.join(BASE_DIR, "data", "collaborator", collab_id, "gnn", "testing_input")
+                "folder": os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "collaborator", collab_id, "gnn", "testing_input")
             },
             "lulc": {
                 "extension": ".tif",
-                "folder": os.path.join(BASE_DIR, "data", "collaborator", collab_id, "gnn", "testing_input", "lulc")
+                "folder": os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "collaborator", collab_id, "gnn", "testing_input", "lulc")
             },
             "pop": {
                 "extension": ".tif",
-                "folder": os.path.join(BASE_DIR, "data", "collaborator", collab_id, "gnn", "testing_input", "pop")
+                "folder": os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "collaborator", collab_id, "gnn", "testing_input", "pop")
             }
         }
 
@@ -1693,7 +1687,7 @@ def collaborator_update_all_stations_display():
         df.set_index("station", inplace=True)
 
         collab_id = session["collab_id"]
-        BASE = os.path.join(BASE_DIR, "data", "collaborator", collab_id, "display")
+        BASE = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "collaborator", collab_id, "display")
 
         month_map = {
             "1": "Jan", "2": "Feb", "3": "Mar",
@@ -1832,7 +1826,7 @@ def upload_all_display():
 
         print("Collab ID:", collab_id)
 
-        upload_folder = os.path.join(BASE_DIR, "data", "collaborator", collab_id, "display", "geojson")
+        upload_folder = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "collaborator", collab_id, "display", "geojson")
 
         # ✅ CREATE FOLDER (FIX)
         os.makedirs(upload_folder, exist_ok=True)
@@ -1879,7 +1873,7 @@ def upload_all_display():
 # =========================
 # UPLOAD-CHUNK  (Rasters & CSVs)
 # =========================
-DATA_DIR = os.path.join(BASE_DIR, "data")
+DATA_DIR = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev")
 
 @app.route("/collaborator/display/upload-chunk", methods=["POST"])
 def upload_chunk_display():
@@ -1898,7 +1892,7 @@ def upload_chunk_display():
         if not file or not filename:
             return jsonify({"error": "Missing file data"}), 400
 
-        base_folder = os.path.join(BASE_DIR, "data", "collaborator", collab_id, "display")
+        base_folder = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "collaborator", collab_id, "display")
         os.makedirs(base_folder, exist_ok=True)
         temp_dir = os.path.join(base_folder, "temp_chunks")
         os.makedirs(temp_dir, exist_ok=True)
@@ -1970,7 +1964,7 @@ def upload_chunk_training():
         file_category = request.form.get("fileCategory", "")
         field_name = request.form.get("fieldName", "")
 
-        base_folder = os.path.join(BASE_DIR, "data", "collaborator", collab_id, "gnn", "training_input")
+        base_folder = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "collaborator", collab_id, "gnn", "training_input")
      
         temp_dir = os.path.join(base_folder, "temp_chunks")
         os.makedirs(temp_dir, exist_ok=True)
@@ -2030,7 +2024,7 @@ def upload_chunk_testing():
         total_chunks = int(request.form.get("totalChunks", 1))
         file_category = request.form.get("fileCategory", "")
 
-        base_folder = os.path.join(BASE_DIR, "data", "collaborator",collab_id, "gnn", "testing_input")
+        base_folder = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "collaborator",collab_id, "gnn", "testing_input")
 
         temp_dir = os.path.join(base_folder, "temp_chunks")
         os.makedirs(temp_dir, exist_ok=True)
@@ -2121,8 +2115,7 @@ def collaborator_generate_precip_year():
 
         
         raster_path = os.path.join(
-            BASE_DIR,
-            "data",
+            "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev",
             "collaborator",
             session["collab_id"],
             "display",
@@ -2168,8 +2161,7 @@ def collaborator_generate_temp_year():
 
         
         raster_path = os.path.join(
-            BASE_DIR,
-            "data",
+            "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev",
             "collaborator",
             session["collab_id"],
             "display",
@@ -2214,8 +2206,7 @@ def collaborator_generate_streamflow_year():
 
         
         raster_path = os.path.join(
-            BASE_DIR,
-            "data",
+            "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev",
             "collaborator",
             session["collab_id"],
             "display",
@@ -2260,8 +2251,7 @@ def collaborator_generate_waterlevel_year():
 
         
         raster_path = os.path.join(
-            BASE_DIR,
-            "data",
+            "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev",
             "collaborator",
             session["collab_id"],
             "display",
@@ -2291,7 +2281,7 @@ import re
 @app.route("/api/collaborator-get-years/<dataset>")
 def get_years(dataset):
 
-    base_path = os.path.join(BASE_DIR, "data", "collaborator", session["collab_id"], "display")
+    base_path = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "collaborator", session["collab_id"], "display")
 
     try:
 
@@ -2385,7 +2375,7 @@ def collaborator_raster_range_meta():
         return jsonify({"error": "Unauthorized"}), 401
 
     collab_id = session["collab_id"]
-    raster_dir = os.path.join(BASE_DIR, "data", "collaborator", collab_id, "display", "raster")
+    raster_dir = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "collaborator", collab_id, "display", "raster")
 
     def pick_file(kind):
         if not os.path.exists(raster_dir):
