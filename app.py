@@ -360,7 +360,7 @@ def run_admin_gnn_pipeline():
             return jsonify({"error": "Unauthorized"}), 401
         return render_template("admin/login.html", error="You are not Authorised . Login First ")
 
-    scripts_dir = os.path.join(BASE_DIR, "data", "admin", "gnn")
+    scripts_dir = os.path.join("https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev", "data", "admin", "gnn")
     ordered_scripts = [
         "app.py",
         "app_testing.py",
