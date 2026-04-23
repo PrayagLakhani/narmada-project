@@ -22,6 +22,10 @@ COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
+RUN pip install torch --index-url https://download.pytorch.org/whl/cpu
+RUN python -m venv data/admin/gnn/venv && \
+    data/admin/gnn/venv/bin/pip install torch --index-url https://download.pytorch.org/whl/cpu
+
 # DEBUG (remove later)
 RUN pip list
 
