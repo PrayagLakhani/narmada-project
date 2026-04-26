@@ -107,9 +107,9 @@ def _serialize_job(job_doc):
 
 
 def get_data_path(path):
-    if not BASE_URL:
+    if not DATA_BASE_URL:
         raise RuntimeError("DATA_BASE_URL is not configured. Set DATA_BASE_URL to your permanent data host.")
-    return f"{BASE_URL}/{path.lstrip('/')}"
+    return f"{DATA_BASE_URL}/{path.lstrip('/')}"
 
 
 def read_data_geofile(relative_path):
