@@ -1,6 +1,6 @@
 // Load districts
 
-const API_BASE = "https://narmada-project-qf03.onrender.com";
+const API_BASE = "https://narmada-project.onrender.com";
 
 fetch(`${API_BASE}/api/admin-districts`)
 .then(res => res.json())

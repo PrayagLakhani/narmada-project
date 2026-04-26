@@ -48,7 +48,7 @@ DATA_BASE_URL = os.getenv(
 # 🔹 API Base URL (Render)
 API_BASE_URL = os.getenv(
     "API_BASE_URL",
-    "https://narmada-project-qf03.onrender.com"
+    "https://narmada-project.onrender.com"
 ).rstrip("/")
 
 # Warn if missing (optional since we added defaults)

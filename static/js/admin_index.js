@@ -2,7 +2,7 @@ const BASE_URL = "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev";
 const dataUrl = (path) =>
   `${BASE_URL}/${String(path).replace(/^\/+/, "")}`;
 
-const API_BASE = "https://narmada-project-qf03.onrender.com";
+const API_BASE = "https://narmada-project.onrender.com";
 
 // ================= COLOR CLASSIFICATION =================
 

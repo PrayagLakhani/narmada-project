@@ -1,5 +1,5 @@
 
-const API_BASE = "https://narmada-project-qf03.onrender.com";
+const API_BASE = "https://narmada-project.onrender.com";
 
 
 function loadRiverData() {
