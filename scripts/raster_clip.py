@@ -3,13 +3,16 @@ import subprocess
 import tempfile
 
 
-BASE_DATA = r"O:\data"
+DATA_BASE_URL = os.getenv(
+    "DATA_BASE_URL",
+    "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev"
+).rstrip("/")
 
 
 def clip_precipitation_raster():
-    input_raster = os.path.join(BASE_DATA, "raster", "2011_2023_Precipitation.tif")
-    basin_geojson = os.path.join(BASE_DATA, "geojson", "narmada.geojson")
-    output_raster = os.path.join(BASE_DATA, "raster", "precip_clipped.tif")
+    input_raster = f"{DATA_BASE_URL}/raster/2011_2023_Precipitation.tif"
+    basin_geojson = f"{DATA_BASE_URL}/geojson/narmada.geojson"
+    output_raster = f"{DATA_BASE_URL}/raster/precip_clipped.tif"
 
     valid_geojson = os.path.join(tempfile.gettempdir(), "narmada_valid.geojson")
 
@@ -23,7 +26,8 @@ def clip_precipitation_raster():
             "gdalwarp",
             "-cutline", valid_geojson,
             "-crop_to_cutline",
-            "-multi",
+            "-wm", "32",
+            "-wo", "NUM_THREADS=2",
             "-of", "GTiff",
             "-co", "TILED=YES",
             "-co", "COMPRESS=DEFLATE",
@@ -39,9 +43,9 @@ def clip_precipitation_raster():
 
 
 def clip_temperature_raster():
-    input_raster = os.path.join(BASE_DATA, "raster", "2011_2023_Mean_Temperature.tif")
-    basin_geojson = os.path.join(BASE_DATA, "geojson", "narmada.geojson")
-    output_raster = os.path.join(BASE_DATA, "raster", "temp_clipped.tif")
+    input_raster = f"{DATA_BASE_URL}/raster/2011_2023_Mean_Temperature.tif"
+    basin_geojson = f"{DATA_BASE_URL}/geojson/narmada.geojson"
+    output_raster = f"{DATA_BASE_URL}/raster/temp_clipped.tif"
 
     valid_geojson = os.path.join(tempfile.gettempdir(), "narmada_valid.geojson")
 
@@ -55,7 +59,8 @@ def clip_temperature_raster():
             "gdalwarp",
             "-cutline", valid_geojson,
             "-crop_to_cutline",
-            "-multi",
+            "-wm", "32",
+            "-wo", "NUM_THREADS=2",
             "-of", "GTiff",
             "-co", "TILED=YES",
             "-co", "COMPRESS=DEFLATE",

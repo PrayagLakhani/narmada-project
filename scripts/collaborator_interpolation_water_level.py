@@ -20,15 +20,19 @@ except:
 # PATHS
 # =====================================================
 collab_id = sys.argv[3]
-BASE_DATA = r"O:\data"
+DATA_BASE_URL = os.getenv(
+    "DATA_BASE_URL",
+    "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev"
+).rstrip("/")
 
-csv_dir = os.path.join(BASE_DATA, "collaborator", collab_id, "display", "waterlevel")
+csv_dir = f"{DATA_BASE_URL}/collaborator/{collab_id}/display/waterlevel"
+
 buffer_candidates = [
-    os.path.join(BASE_DATA, "collaborator", collab_id, "display", "shp", "narmada_buffer_1000m.shp"),
-    os.path.join(BASE_DATA, "admin", "display", "shp", "narmada_buffer_1000m.shp"),
+    f"{DATA_BASE_URL}/collaborator/{collab_id}/display/shp/narmada_buffer_1000m.shp",
+    f"{DATA_BASE_URL}/admin/display/shp/narmada_buffer_1000m.shp",
 ]
-output_folder = os.path.join(BASE_DATA, "collaborator", collab_id, "display", "waterlevel", "output_waterlevel_rasters")
 
+output_folder = f"{DATA_BASE_URL}/collaborator/{collab_id}/display/waterlevel/output_waterlevel_rasters"
 year_input = int(sys.argv[1])
 input_month=(sys.argv[2])
 
@@ -54,7 +58,7 @@ print("Reading station CSV files...")
 csv_files = sorted([f for f in os.listdir(csv_dir) if f.lower().endswith(".csv")])
 
 if len(csv_files) == 0:
-    print("❌ No CSV files found in folder")
+    print("No CSV files found in folder")
     exit()
 
 df_list = []
@@ -96,18 +100,18 @@ for csv_name in csv_files:
     df_list.append(temp_df)
 
 if skipped_files:
-    print("⚠ Skipped files:")
+    print("Skipped files:")
     for item in skipped_files:
         print(f"  - {item}")
 
 if len(df_list) == 0:
-    print("❌ No valid station CSV files found after filtering")
+    print("No valid station CSV files found after filtering")
     exit(1)
 
 # Combine all stations
 df = pd.concat(df_list, ignore_index=True)
 
-print("✅ Total records:", len(df))
+print("Total records:", len(df))
 
 # Clean column names
 df.columns = df.columns.str.strip()
@@ -258,6 +262,6 @@ for year in range(start_year, end_year + 1):
 
                 dst.write(block, 1, window=window)
 
-        print("  ✔ Saved:", out_path)
+        print("Saved:", out_path)
 
-print("\n✅ FINAL SUCCESS: Monthly Water Level IDW rasters created!")
+print("\n FINAL SUCCESS: Monthly Water Level IDW rasters created!")

@@ -554,7 +554,7 @@ function getRangeFileUrl(kind) {
 
 async function loadCollaboratorRasterRangeMeta() {
   try {
-    const res = await fetch(`${BASE_PATH}/api/collaborator-raster-range-meta`);
+    const res = await fetch(`${API_BASE}/api/collaborator-raster-range-meta`);
     if (!res.ok) return;
 
     const data = await res.json();
@@ -718,10 +718,10 @@ document.addEventListener("click", async function (e) {
 
   // ================= CLIP PRECIP =================
   if (e.target.id === "clipPrecipBtn") {
-    const r = await fetch(`${BASE_PATH}/api/collaborator-clip-precip`);
+    const r = await fetch(`${API_BASE}/api/collaborator-clip-precip`);
     if (!r.ok) return alert("Error");
 
-    const t = await fetch(`${dataUrl("/raster/precip_clipped.tif")}?ts=` + Date.now());
+    const t = await fetch(dataUrl(BASE_PATH + "/raster/precip_clipped.tif") + `?ts=${Date.now()}`);
     const b = await t.arrayBuffer();
     const g = await parseGeoraster(b);
 
@@ -754,10 +754,10 @@ document.addEventListener("click", async function (e) {
 
   // ================= CLIP TEMP =================
   if (e.target.id === "clipTempBtn") {
-    const r = await fetch(`${BASE_PATH}/api/collaborator-clip-temperature`);
+    const r = await fetch(`${API_BASE}/api/collaborator-clip-temperature`);
     if (!r.ok) return alert("Error");
 
-    const t = await fetch(`${dataUrl("/raster/temp_clipped.tif")}?ts=` + Date.now());
+    const t = await fetch(dataUrl(BASE_PATH + "/raster/temp_clipped.tif") + `?ts=${Date.now()}`);
     const b = await t.arrayBuffer();
     const g = await parseGeoraster(b);
 
@@ -853,9 +853,9 @@ document.addEventListener("click", async function (e) {
     const year = document.getElementById("precipYear").value;
     if (!year) return alert("Select year");
 
-    await fetch(`${BASE_PATH}/api/collaborator-generate-precip-year?year=${year}`);
+    await fetch(`${API_BASE}/api/collaborator-generate-precip-year?year=${year}`);
 
-    const t = await fetch(`${BASE_PATH}/raster/precip/output_precip_rasters/precip_${year}_30m.tif?ts=${Date.now()}`);
+    const t = await fetch(dataUrl(BASE_PATH + "/raster/precip/output_precip_rasters/precip_${year}_30m.tif") + `?ts=${Date.now()}`);
     const b = await t.arrayBuffer();
     const g = await parseGeoraster(b);
 
@@ -906,9 +906,9 @@ document.addEventListener("click", async function (e) {
     const year = document.getElementById("tempYear").value;
     if (!year) return alert("Select year");
 
-    await fetch(`${BASE_PATH}/api/collaborator-generate-temp-year?year=${year}`);
+    await fetch(`${API_BASE}/api/collaborator-generate-temp-year?year=${year}`);
 
-    const t = await fetch(`${BASE_PATH}/raster/temp/output_temp_rasters/temp_${year}_30m.tif?ts=${Date.now()}`);
+    const t = await fetch(dataUrl(BASE_PATH + "/raster/temp/output_temp_rasters/temp_${year}_30m.tif") + `?ts=${Date.now()}`);
     const b = await t.arrayBuffer();
     const g = await parseGeoraster(b);
 
@@ -1043,9 +1043,9 @@ document.addEventListener("click", async function (e) {
     const month = document.getElementById("StreamFlowMonth").value;
     if (!year) return alert("Select year");
 
-    await fetch(`${BASE_PATH}/api/collaborator-generate-streamflow-year?year=${year}&month=${month}`);
+    await fetch(`${API_BASE}/api/collaborator-generate-streamflow-year?year=${year}&month=${month}`);
 
-    const t = await fetch(`${BASE_PATH}/raster/streamflow/output_streamflow_rasters/streamflow_${year}_${month}_30m.tif?ts=${Date.now()}`);
+    const t = await fetch(dataUrl(BASE_PATH + "/raster/streamflow/output_streamflow_rasters/streamflow_${year}_${month}_30m.tif") + `?ts=${Date.now()}`);
     const b = await t.arrayBuffer();
     const g = await parseGeoraster(b);
 
@@ -1097,9 +1097,9 @@ document.addEventListener("click", async function (e) {
     const month = document.getElementById("WaterLevelMonth").value;
     if (!year) return alert("Select year");
 
-    await fetch(`${BASE_PATH}/api/collaborator-generate-waterlevel-year?year=${year}&month=${month}`);
+    await fetch(`${API_BASE}/api/collaborator-generate-waterlevel-year?year=${year}&month=${month}`);
 
-    const t = await fetch(`${BASE_PATH}/raster/waterlevel/output_waterlevel_rasters/waterlevel_${year}_${month}_30m.tif?ts=${Date.now()}`);
+    const t = await fetch(dataUrl(BASE_PATH + "/raster/waterlevel/output_waterlevel_rasters/waterlevel_${year}_${month}_30m.tif") + `?ts=${Date.now()}`);
     const b = await t.arrayBuffer();
     const g = await parseGeoraster(b);
     const min = g.mins[0];
@@ -1189,7 +1189,7 @@ async function populateYearsDynamic(selectId, dataset) {
   if (!select) return;
 
   try {
-    const res = await fetch(`${BASE_PATH}/api/collaborator-get-years/${dataset}`);
+    const res = await fetch(`${API_BASE}/api/collaborator-get-years/${dataset}`);
     const years = await res.json();
 
     select.innerHTML = ""; // clear old

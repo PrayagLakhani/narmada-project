@@ -38,19 +38,37 @@ from scripts.admin_raster_clip import (
 )
 
 app = Flask(__name__, template_folder="template")
-BASE_URL = os.getenv("DATA_BASE_URL", "").rstrip("/")
-if not BASE_URL:
-    print("WARNING: DATA_BASE_URL is not set. Configure DATA_BASE_URL in env vars (no tunnel fallback is used).")
-# Keep subprocess scripts in sync with the API's configured data server.
-os.environ["DATA_BASE_URL"] = BASE_URL
+
+# 🔹 Static Data Source (R2)
+DATA_BASE_URL = os.getenv(
+    "DATA_BASE_URL",
+    "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev"
+).rstrip("/")
+
+# 🔹 API Base URL (Render)
+API_BASE_URL = os.getenv(
+    "API_BASE_URL",
+    "https://narmada-project-qf03.onrender.com"
+).rstrip("/")
+
+# Warn if missing (optional since we added defaults)
+if not DATA_BASE_URL:
+    raise ValueError("DATA_BASE_URL is not set.")
+
+# Sync for subprocess usage
+os.environ["DATA_BASE_URL"] = DATA_BASE_URL
+os.environ["API_BASE_URL"] = API_BASE_URL
+# CORS (restrict in production if needed)
 CORS(app)
+
 district_cache = None
 mean_cache = {}
-PORT = 5000
+
+# Use dynamic port (important for Render)
+PORT = int(os.environ.get("PORT", 5000))
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-BASE_UPLOAD = "data"
-os.makedirs(BASE_UPLOAD, exist_ok=True)
+
 
 
 def _utc_now_iso():
@@ -399,7 +417,7 @@ def run_admin_gnn_pipeline():
     if python_cmd is None:
         return jsonify({
             "error": "No Python environment with torch found for admin pipeline",
-            "details": "Install torch in data/admin/gnn/venv or use a compatible environment with torch."
+            "details": "Install torch in admin/gnn/venv or use a compatible environment with torch."
         }), 500
 
     try:
@@ -1574,7 +1592,7 @@ def run_collaborator_gnn_pipeline():
     if python_cmd is None:
         return jsonify({
             "error": "No Python environment with torch found for collaborator pipeline",
-            "details": "Install torch in data/collaborator/gnn/venv or data/admin/gnn/venv."
+            "details": "Install torch in collaborator/gnn/venv or admin/gnn/venv."
         }), 500
 
     try:

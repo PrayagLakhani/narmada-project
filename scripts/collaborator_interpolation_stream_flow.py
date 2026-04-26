@@ -21,14 +21,19 @@ collab_id=(sys.argv[3])
 # =====================================================
 # PATHS
 # =====================================================
-BASE_DATA = r"O:\data"
+DATA_BASE_URL = os.getenv(
+    "DATA_BASE_URL",
+    "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev"
+).rstrip("/")
 
-csv_dir = os.path.join(BASE_DATA, "collaborator", collab_id, "display", "streamflow")
+csv_dir = f"{DATA_BASE_URL}/collaborator/{collab_id}/display/streamflow"
+
 buffer_candidates = [
-    os.path.join(BASE_DATA, "collaborator", collab_id, "display", "shp", "narmada_buffer_1000m.shp"),
-    os.path.join(BASE_DATA, "admin", "display", "shp", "narmada_buffer_1000m.shp"),
+    f"{DATA_BASE_URL}/collaborator/{collab_id}/display/shp/narmada_buffer_1000m.shp",
+    f"{DATA_BASE_URL}/admin/display/shp/narmada_buffer_1000m.shp",
 ]
-output_folder = os.path.join(BASE_DATA, "collaborator", collab_id, "display", "streamflow", "output_streamflow_rasters")
+
+output_folder = f"{DATA_BASE_URL}/collaborator/{collab_id}/display/streamflow/output_streamflow_rasters"
 
 year_input = int(sys.argv[1])
 input_month=(sys.argv[2])
@@ -55,7 +60,7 @@ print("Reading streamflow CSV files...")
 csv_files = sorted([f for f in os.listdir(csv_dir) if f.lower().endswith(".csv")])
 
 if len(csv_files) == 0:
-    print("❌ No CSV files found")
+    print("No CSV files found")
     exit()
 
 df_list = []
@@ -102,13 +107,13 @@ if skipped_files:
         print(f"  - {item}")
 
 if len(df_list) == 0:
-    print("❌ No valid station CSV files found after filtering")
+    print("No valid station CSV files found after filtering")
     exit(1)
 
 # Combine all stations
 df = pd.concat(df_list, ignore_index=True)
 
-print("✅ Total records:", len(df))
+print("Total records:", len(df))
 
 # Clean
 df.columns = df.columns.str.strip()
@@ -254,4 +259,4 @@ for year in range(start_year, end_year + 1):
 
         print("  ✔ Saved:", out_path)
 
-print("\n✅ FINAL SUCCESS: Streamflow IDW rasters created!")
+print("\n FINAL SUCCESS: Streamflow IDW rasters created!")

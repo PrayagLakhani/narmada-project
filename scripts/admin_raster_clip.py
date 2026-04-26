@@ -7,8 +7,8 @@ import boto3
 BASE_DATA = r"O:\data"
 
 
-def _local_data_file(relative_path):
-    return os.path.join(BASE_DATA, relative_path.replace("/", os.sep))
+def r2_url(path):
+    return f"{R2_PUBLIC}/{path.lstrip('/')}"
 
 
 
@@ -26,7 +26,8 @@ s3 = boto3.client(
 
 def download_file(url, local_path):
     r = requests.get(url)
-    r.raise_for_status()
+    if r.status_code != 200:
+        raise Exception(f"Failed to download: {url}")
     with open(local_path, "wb") as f:
         f.write(r.content)
 
@@ -58,9 +59,8 @@ def admin_clip_precipitation_raster():
             "gdalwarp",
             "-cutline", valid_geojson,
             "-crop_to_cutline",
-            "-wm", "32",            # 🔽 reduce memory (IMPORTANT)
-            "-multi",               # parallel processing
-            "-wo", "NUM_THREADS=ALL_CPUS",
+            "-wm", "32",
+            "-wo", "NUM_THREADS=2",           
             "-of", "GTiff",
             "-co", "TILED=YES",
             "-co", "COMPRESS=DEFLATE",
@@ -82,6 +82,10 @@ def admin_clip_precipitation_raster():
 
 
 def admin_clip_temperature_raster():
+
+    input_url = f"{R2_PUBLIC}/admin/display/raster/2011_2023_Mean_Temperature.tif"
+    geojson_url = f"{R2_PUBLIC}/admin/display/geojson/narmada.geojson"
+
     input_raster = _local_data_file("admin/display/raster/2011_2023_Mean_Temperature.tif")
     basin_geojson = _local_data_file("admin/display/geojson/narmada.geojson")
     output_raster = _local_data_file("admin/display/raster/temp_clipped.tif")
@@ -100,8 +104,7 @@ def admin_clip_temperature_raster():
             "-cutline", valid_geojson,
             "-crop_to_cutline",
             "-wm", "32",
-            "-multi",
-            "-wo", "NUM_THREADS=ALL_CPUS",
+            "-wo", "NUM_THREADS=2",
             "-of", "GTiff",
             "-co", "TILED=YES",
             "-co", "COMPRESS=DEFLATE",
@@ -135,7 +138,8 @@ def collaborator_clip_precipitation_raster(collab_id):
             "gdalwarp",
             "-cutline", valid_geojson,
             "-crop_to_cutline",
-            "-wm", "128",
+            "-wm", "32",
+            "-wo", "NUM_THREADS=2",
             "-of", "GTiff",
             "-co", "TILED=YES",
             "-co", "COMPRESS=DEFLATE",
@@ -168,7 +172,8 @@ def collaborator_clip_temperature_raster(collab_id):
             "gdalwarp",
             "-cutline", valid_geojson,
             "-crop_to_cutline",
-            "-wm", "128",
+            "-wm", "32",
+            "-wo", "NUM_THREADS=2",
             "-of", "GTiff",
             "-co", "TILED=YES",
             "-co", "COMPRESS=DEFLATE",

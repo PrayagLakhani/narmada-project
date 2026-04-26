@@ -11,11 +11,15 @@ from shapely.geometry import Point
 
 
 MONTH_ORDER = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-BASE_DATA = r"O:\data"
+DATA_BASE_URL = os.getenv(
+    "DATA_BASE_URL",
+    "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev"
+).rstrip("/")
 
 
-def _local_data_file(relative_path):
-    return os.path.join(BASE_DATA, relative_path.replace("/", os.sep))
+
+def r2_path(relative_path):
+    return f"{DATA_BASE_URL}/{relative_path.lstrip('/')}"
 
 
 def _normalize_month_column(col_name):
@@ -49,8 +53,9 @@ def _extract_lon_lat_from_filename(filename):
 
 
 def _compute_parameter_means_for_district(base_dir, district_geom):
-    display_dir = os.path.join(BASE_DATA, "admin", "display")
-    if not os.path.exists(display_dir):
+    display_dir = f"{DATA_BASE_URL}/admin/display"
+    geojson_url = f"{display_dir}/geojson/district.geojson"
+    if not url_exists(geojson_url):
         return []
 
     folder_labels = {

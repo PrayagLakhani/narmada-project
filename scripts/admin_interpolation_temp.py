@@ -19,11 +19,14 @@ year_input = int(sys.argv[1])
 # ======================================================
 # PATHS
 # ======================================================
-BASE_DATA = r"O:\data"
+DATA_BASE_URL = os.getenv(
+    "DATA_BASE_URL",
+    "https://pub-7c568aa6f5ec40dbac09e26180370bdd.r2.dev"
+).rstrip("/")
 
-station_folder = os.path.join(BASE_DATA, "admin", "display", "temp")
-narmada_geojson = os.path.join(BASE_DATA, "admin", "display", "geojson", "narmada.geojson")
-output_folder = os.path.join(BASE_DATA, "admin", "display", "temp", "output_temp_rasters")
+station_folder = f"{DATA_BASE_URL}/admin/display/temp"
+narmada_geojson = f"{DATA_BASE_URL}/admin/display/geojson/narmada.geojson"
+output_folder = f"{DATA_BASE_URL}/admin/display/temp/output_temp_rasters"
 
 os.makedirs(output_folder, exist_ok=True)
 

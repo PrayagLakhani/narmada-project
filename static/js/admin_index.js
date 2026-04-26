@@ -517,7 +517,7 @@ function getRangeFileUrl(kind) {
 
 async function loadAdminRasterRangeMeta() {
   try {
-    const res = await fetch("/api/admin-raster-range-meta");
+    const res = await fetch(`${API_BASE}/api/admin-raster-range-meta`);
     if (!res.ok) return;
 
     const data = await res.json();
@@ -792,7 +792,7 @@ document.addEventListener("click", async function (e) {
       }
       
       if (!fullPrecipLayer) {
-        const r = await fetch(`${precipUrl}?ts=${Date.now()}`);
+        const r = await fetch(dataUrl(precipUrl) + `?ts=${Date.now()}`);
         const b = await r.arrayBuffer();
         const g = await parseGeoraster(b);
 
@@ -820,10 +820,10 @@ document.addEventListener("click", async function (e) {
       const tempUrl = getRangeFileUrl("temp");
       if (!tempUrl) {
         e.target.checked = false;
-        return alert("Temperature full raster not found in data/admin/display/raster");
+        return alert("Temperature full raster not found in admin/display/raster");
       }
       if (!fullTempLayer) {
-        const r = await fetch(`${tempUrl}?ts=${Date.now()}`);
+        const r = await fetch(dataUrl(tempUrl) + `?ts=${Date.now()}`);
         const b = await r.arrayBuffer();
         const g = await parseGeoraster(b);
 
